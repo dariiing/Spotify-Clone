@@ -1,0 +1,15 @@
+@import url('./main-layout.css');
+@import url('./views/home-view.css');
+@import url('./views/liked-songs-view.css');
+@import url('./views/playlists-view.css');
+@import url('./views/recommendations-view.css');
+@import url('./views/edit-account-view.css');    html {
+      --lumo-primary-color: hsl(214, 76%, 15%);
+      --lumo-primary-color-50pct: hsla(214, 76%, 15%, 0.5);
+      --lumo-primary-color-10pct: hsla(214, 76%, 15%, 0.1);
+      --lumo-primary-text-color: hsl(214, 76%, 15%);
+      --lumo-border-radius-s: calc(var(--lumo-size-m) / 6);
+      --lumo-border-radius-m: calc(var(--lumo-size-m) / 2);
+      --lumo-border-radius-l: var(--lumo-size-m);
+
+    }

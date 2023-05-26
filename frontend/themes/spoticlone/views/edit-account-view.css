@@ -1,0 +1,14 @@
+.edit-account-view {
+  display: block;
+  margin: 0 auto;
+  max-width: 1024px;
+  padding: 0 var(--lumo-space-l);
+}
+.edit-account-view .button-layout {
+  margin-bottom: var(--lumo-space-l);
+  margin-top: var(--lumo-space-m);
+}
+.edit-account-view h3 {
+  margin-bottom: var(--lumo-space-s);
+  margin-top: var(--lumo-space-l);
+}
