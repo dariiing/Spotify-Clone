@@ -108,7 +108,7 @@ public class RecommendationsView extends Div {
             Div actions = new Div(label, resetBtn);
             actions.addClassName(LumoUtility.Gap.SMALL);
             actions.addClassName("actions");
-
+            //
             add(actions);
         }
 
