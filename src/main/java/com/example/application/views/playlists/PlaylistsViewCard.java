@@ -1,10 +1,16 @@
 package com.example.application.views.playlists;
 
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.html.ListItem;
-import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.theme.lumo.LumoUtility.AlignItems;
 import com.vaadin.flow.theme.lumo.LumoUtility.Background;
 import com.vaadin.flow.theme.lumo.LumoUtility.BorderRadius;
@@ -39,21 +45,43 @@ public class PlaylistsViewCard extends ListItem {
 
         Span header = new Span();
         header.addClassNames(FontSize.XLARGE, FontWeight.SEMIBOLD);
-        header.setText("Title");
+        header.setText(text);
 
         Span subtitle = new Span();
         subtitle.addClassNames(FontSize.SMALL, TextColor.SECONDARY);
-        subtitle.setText("Card subtitle");
+        // subtitle.setText("Created by John");
 
-        Paragraph description = new Paragraph(
-                "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut.");
-        description.addClassName(Margin.Vertical.MEDIUM);
+        Button deleteButton = new Button("Delete playlist");
+        deleteButton.addClickListener(e -> showDeleteConfirmationDialog());
 
-        Span badge = new Span();
-        badge.getElement().setAttribute("theme", "badge");
-        badge.setText("Label");
-
-        add(div, header, subtitle, description, badge);
-
+        add(div, header, subtitle, deleteButton);
     }
+
+    private void showDeleteConfirmationDialog() {
+        Dialog dialog = new Dialog();
+        dialog.setCloseOnEsc(false);
+        dialog.setCloseOnOutsideClick(false);
+
+        VerticalLayout layout = new VerticalLayout();
+        layout.add(new Span("Are you sure you want to delete this playlist?"));
+        layout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+
+        Button confirmButton = new Button("Delete");
+        confirmButton.addClickListener(e -> {
+            dialog.close();
+        });
+
+        Button cancelButton = new Button("Cancel");
+        cancelButton.addClickListener(e -> dialog.close());
+
+        HorizontalLayout buttonContainer = new HorizontalLayout(confirmButton, cancelButton);
+        buttonContainer.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        buttonContainer.setWidthFull();
+
+        layout.add(buttonContainer);
+        dialog.add(layout);
+        dialog.open();
+    }
+
+
 }

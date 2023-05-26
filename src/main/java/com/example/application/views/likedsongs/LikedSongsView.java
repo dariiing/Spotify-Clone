@@ -86,12 +86,9 @@ public class LikedSongsView extends Div {
 
     public static class Filters extends Div implements Specification<SamplePerson> {
 
-        private final TextField name = new TextField("Name");
-        private final TextField phone = new TextField("Phone");
-        private final DatePicker startDate = new DatePicker("Date of Birth");
-        private final DatePicker endDate = new DatePicker();
-        private final MultiSelectComboBox<String> occupations = new MultiSelectComboBox<>("Occupation");
-        private final CheckboxGroup<String> roles = new CheckboxGroup<>("Role");
+        private final TextField name = new TextField("Song Name");
+        private final TextField phone = new TextField("Artist Name");
+
 
         public Filters(Runnable onSearch) {
 
@@ -99,12 +96,9 @@ public class LikedSongsView extends Div {
             addClassName("filter-layout");
             addClassNames(LumoUtility.Padding.Horizontal.LARGE, LumoUtility.Padding.Vertical.MEDIUM,
                     LumoUtility.BoxSizing.BORDER);
-            name.setPlaceholder("First or last name");
+            name.setPlaceholder("Thriller");
+            phone.setPlaceholder("Michael Jackson");
 
-            occupations.setItems("Insurance Clerk", "Mortarman", "Beer Coil Cleaner", "Scale Attendant");
-
-            roles.setItems("Worker", "Supervisor", "Manager", "External");
-            roles.addClassName("double-width");
 
             // Action buttons
             Button resetBtn = new Button("Reset");
@@ -112,10 +106,6 @@ public class LikedSongsView extends Div {
             resetBtn.addClickListener(e -> {
                 name.clear();
                 phone.clear();
-                startDate.clear();
-                endDate.clear();
-                occupations.clear();
-                roles.clear();
                 onSearch.run();
             });
             Button searchBtn = new Button("Search");
@@ -126,24 +116,24 @@ public class LikedSongsView extends Div {
             actions.addClassName(LumoUtility.Gap.SMALL);
             actions.addClassName("actions");
 
-            add(name, phone, createDateRangeFilter(), occupations, roles, actions);
+            add(name, phone,actions);
         }
 
-        private Component createDateRangeFilter() {
-            startDate.setPlaceholder("From");
-
-            endDate.setPlaceholder("To");
-
-            // For screen readers
-            setAriaLabel(startDate, "From date");
-            setAriaLabel(endDate, "To date");
-
-            FlexLayout dateRangeComponent = new FlexLayout(startDate, new Text(" – "), endDate);
-            dateRangeComponent.setAlignItems(FlexComponent.Alignment.BASELINE);
-            dateRangeComponent.addClassName(LumoUtility.Gap.XSMALL);
-
-            return dateRangeComponent;
-        }
+//        private Component createDateRangeFilter() {
+//            startDate.setPlaceholder("From");
+//
+//            endDate.setPlaceholder("To");
+//
+//            // For screen readers
+//            setAriaLabel(startDate, "From date");
+//            setAriaLabel(endDate, "To date");
+//
+//            FlexLayout dateRangeComponent = new FlexLayout(startDate, new Text(" – "), endDate);
+//            dateRangeComponent.setAlignItems(FlexComponent.Alignment.BASELINE);
+//            dateRangeComponent.addClassName(LumoUtility.Gap.XSMALL);
+//
+//            return dateRangeComponent;
+//        }
 
         private void setAriaLabel(DatePicker datePicker, String label) {
             datePicker.getElement().executeJs("const input = this.inputElement;" //
@@ -174,33 +164,6 @@ public class LikedSongsView extends Div {
                 predicates.add(phoneMatch);
 
             }
-            if (startDate.getValue() != null) {
-                String databaseColumn = "dateOfBirth";
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(databaseColumn),
-                        criteriaBuilder.literal(startDate.getValue())));
-            }
-            if (endDate.getValue() != null) {
-                String databaseColumn = "dateOfBirth";
-                predicates.add(criteriaBuilder.greaterThanOrEqualTo(criteriaBuilder.literal(endDate.getValue()),
-                        root.get(databaseColumn)));
-            }
-            if (!occupations.isEmpty()) {
-                String databaseColumn = "occupation";
-                List<Predicate> occupationPredicates = new ArrayList<>();
-                for (String occupation : occupations.getValue()) {
-                    occupationPredicates
-                            .add(criteriaBuilder.equal(criteriaBuilder.literal(occupation), root.get(databaseColumn)));
-                }
-                predicates.add(criteriaBuilder.or(occupationPredicates.toArray(Predicate[]::new)));
-            }
-            if (!roles.isEmpty()) {
-                String databaseColumn = "role";
-                List<Predicate> rolePredicates = new ArrayList<>();
-                for (String role : roles.getValue()) {
-                    rolePredicates.add(criteriaBuilder.equal(criteriaBuilder.literal(role), root.get(databaseColumn)));
-                }
-                predicates.add(criteriaBuilder.or(rolePredicates.toArray(Predicate[]::new)));
-            }
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
         }
 
@@ -226,19 +189,37 @@ public class LikedSongsView extends Div {
 
     private Component createGrid() {
         grid = new Grid<>(SamplePerson.class, false);
+
         grid.addColumn("firstName").setAutoWidth(true);
         grid.addColumn("lastName").setAutoWidth(true);
         grid.addColumn("email").setAutoWidth(true);
-        grid.addColumn("phone").setAutoWidth(true);
-        grid.addColumn("dateOfBirth").setAutoWidth(true);
-        grid.addColumn("occupation").setAutoWidth(true);
-        grid.addColumn("role").setAutoWidth(true);
 
         grid.setItems(query -> samplePersonService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),
                 filters).stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
+
+        //play song
+        grid.addComponentColumn(person -> {
+            Button addToPlaylistButton = new Button(new Icon("lumo", "play"));
+            addToPlaylistButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            return addToPlaylistButton;
+        }).setHeader("Play");
+
+        //add to playlist
+        grid.addComponentColumn(person -> {
+            Button addToPlaylistButton = new Button(new Icon("lumo", "plus"));
+            addToPlaylistButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            return addToPlaylistButton;
+        }).setHeader("Add to Playlist");
+
+        //remove song
+        grid.addComponentColumn(person -> {
+            Button deleteButton = new Button(new Icon("lumo", "minus"));
+            deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            return deleteButton;
+        }).setHeader("Remove");
 
         return grid;
     }

@@ -11,9 +11,9 @@
 
 .recommendations-view .filter-layout .actions {
   display: flex;
-  justify-content: flex-end;
-  align-items: flex-end;
-  grid-column-end: -1;
+  justify-content: flex-start;
+  align-items: center;
+  /*grid-column-end: -1;*/
 }
 
 .recommendations-view .filter-layout vaadin-date-picker {
