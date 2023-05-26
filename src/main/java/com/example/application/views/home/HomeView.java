@@ -1,7 +1,11 @@
 package com.example.application.views.home;
 
+import com.example.application.data.entity.LikedSongs;
 import com.example.application.data.entity.SongTable;
+import com.example.application.data.entity.User;
+import com.example.application.data.service.LikedSongsService;
 import com.example.application.data.service.SongTableService;
+import com.example.application.security.AuthenticatedUser;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -13,6 +17,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -29,6 +34,8 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -44,8 +51,14 @@ public class HomeView extends Div {
     private Filters filters;
     private final SongTableService songTableService;
 
-    public HomeView(SongTableService SongTableService) {
-        this.songTableService = SongTableService;
+    private final LikedSongsService likedSongsService;
+
+    private final AuthenticatedUser authenticatedUser;
+
+    public HomeView(AuthenticatedUser authenticatedUser,SongTableService songTableService, LikedSongsService likedSongsService) {
+        this.authenticatedUser = authenticatedUser;
+        this.songTableService = songTableService;
+        this.likedSongsService = likedSongsService;
         setSizeFull();
         addClassNames("home-view");
 
@@ -83,8 +96,8 @@ public class HomeView extends Div {
 
     public static class Filters extends Div implements Specification<SongTable> {
 
-        private final TextField name = new TextField("Song Name");
-        private final TextField phone = new TextField("Artist Name");
+        private final TextField songName = new TextField("Song/Artist Name");
+//        private final TextField artistName = new TextField("Artist Name");
 
         public Filters(Runnable onSearch) {
 
@@ -92,16 +105,15 @@ public class HomeView extends Div {
             addClassName("filter-layout");
             addClassNames(LumoUtility.Padding.Horizontal.LARGE, LumoUtility.Padding.Vertical.MEDIUM,
                     LumoUtility.BoxSizing.BORDER);
-            name.setPlaceholder("Thriller");
-            phone.setPlaceholder("Michael Jackson");
+            songName.setPlaceholder("Thriller/Michael Jackson");
+//            artistName.setPlaceholder("Michael Jackson");
 
             // Action buttons
             Button resetBtn = new Button("Reset");
             resetBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
             resetBtn.addClickListener(e -> {
-                name.clear();
-                phone.clear();
-
+                songName.clear();
+//                artistName.clear();
                 onSearch.run();
             });
             Button searchBtn = new Button("Search");
@@ -112,7 +124,7 @@ public class HomeView extends Div {
             actions.addClassName(LumoUtility.Gap.SMALL);
             actions.addClassName("actions");
 
-            add(name, phone, actions);
+            add(songName, actions);
         }
 
 
@@ -120,25 +132,22 @@ public class HomeView extends Div {
         public Predicate toPredicate(Root<SongTable> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
             List<Predicate> predicates = new ArrayList<>();
 
-            if (!name.isEmpty()) {
-                String lowerCaseFilter = name.getValue().toLowerCase();
-                Predicate firstNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("songName")),
+            if (!songName.isEmpty()) {
+                String lowerCaseFilter = songName.getValue().toLowerCase();
+                Predicate songNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("songName")),
                         lowerCaseFilter + "%");
-                Predicate lastNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("artistName")),
+                Predicate artistNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("artistName")),
                         lowerCaseFilter + "%");
-                predicates.add(criteriaBuilder.or(firstNameMatch, lastNameMatch));
+                predicates.add(criteriaBuilder.or(songNameMatch,artistNameMatch));
             }
-            if (!phone.isEmpty()) {
-                String databaseColumn = "phone";
-                String ignore = "- ()";
-
-                String lowerCaseFilter = ignoreCharacters(ignore, phone.getValue().toLowerCase());
-                Predicate phoneMatch = criteriaBuilder.like(
-                        ignoreCharacters(ignore, criteriaBuilder, criteriaBuilder.lower(root.get(databaseColumn))),
-                        "%" + lowerCaseFilter + "%");
-                predicates.add(phoneMatch);
-
-            }
+//            if (!artistName.isEmpty()) {
+//                String lowerCaseFilter = songName.getValue().toLowerCase();
+//
+//                Predicate artistNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("artistName")),
+//                        lowerCaseFilter + "%");
+//                predicates.add(criteriaBuilder.or(artistNameMatch));
+//
+//            }
 
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
         }
@@ -184,10 +193,12 @@ public class HomeView extends Div {
         }).setHeader("Play");
 
         grid.addComponentColumn(person -> {
-            Button addToPlaylistButton = new Button(new Icon(VaadinIcon.HEART));
-            addToPlaylistButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            return addToPlaylistButton;
+            Button addToLikedSongsButton = new Button(new Icon(VaadinIcon.HEART));
+            addToLikedSongsButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            addToLikedSongsButton.addClickListener(e -> addToLikedSongs(person));
+            return addToLikedSongsButton;
         }).setHeader("Add to Liked Songs");
+
 
         //add to playlist
         grid.addComponentColumn(person -> {
@@ -202,5 +213,27 @@ public class HomeView extends Div {
     private void refreshGrid() {
         grid.getDataProvider().refreshAll();
     }
+
+    private void addToLikedSongs(SongTable song) {
+        Optional<User> optionalUser = authenticatedUser.get();
+        if (optionalUser.isPresent()) {
+            User currentUser = optionalUser.get();
+            LikedSongs likedSong = new LikedSongs();
+            likedSong.setSongName(song.getSongName());
+            likedSong.setArtistName(song.getArtistName());
+            likedSong.setAlbumName(song.getAlbumName());
+            likedSong.setUser(currentUser);
+
+            // Save the liked song using the LikedSongsService
+            likedSongsService.update(likedSong);
+
+            // Optional: Show a notification or perform any other desired action
+            Notification.show("Song added to Liked Songs");
+        } else {
+            // Handle the case when the current user is not available
+            Notification.show("User not logged in");
+        }
+    }
+
 
 }

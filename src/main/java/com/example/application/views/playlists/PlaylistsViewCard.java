@@ -1,5 +1,7 @@
 package com.example.application.views.playlists;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.html.Div;
@@ -11,29 +13,18 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.theme.lumo.LumoUtility.AlignItems;
-import com.vaadin.flow.theme.lumo.LumoUtility.Background;
-import com.vaadin.flow.theme.lumo.LumoUtility.BorderRadius;
-import com.vaadin.flow.theme.lumo.LumoUtility.Display;
-import com.vaadin.flow.theme.lumo.LumoUtility.FlexDirection;
-import com.vaadin.flow.theme.lumo.LumoUtility.FontSize;
-import com.vaadin.flow.theme.lumo.LumoUtility.FontWeight;
-import com.vaadin.flow.theme.lumo.LumoUtility.JustifyContent;
-import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
-import com.vaadin.flow.theme.lumo.LumoUtility.Overflow;
-import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
-import com.vaadin.flow.theme.lumo.LumoUtility.TextColor;
-import com.vaadin.flow.theme.lumo.LumoUtility.Width;
+import com.vaadin.flow.theme.lumo.LumoUtility;
 
 public class PlaylistsViewCard extends ListItem {
 
     public PlaylistsViewCard(String text, String url) {
-        addClassNames(Background.CONTRAST_5, Display.FLEX, FlexDirection.COLUMN, AlignItems.START, Padding.MEDIUM,
-                BorderRadius.LARGE);
+        addClassNames(LumoUtility.Background.CONTRAST_5, LumoUtility.Display.FLEX, LumoUtility.FlexDirection.COLUMN,
+                LumoUtility.AlignItems.START, LumoUtility.Padding.MEDIUM, LumoUtility.BorderRadius.LARGE);
 
         Div div = new Div();
-        div.addClassNames(Background.CONTRAST, Display.FLEX, AlignItems.CENTER, JustifyContent.CENTER,
-                Margin.Bottom.MEDIUM, Overflow.HIDDEN, BorderRadius.MEDIUM, Width.FULL);
+        div.addClassNames(LumoUtility.Background.CONTRAST, LumoUtility.Display.FLEX, LumoUtility.AlignItems.CENTER,
+                LumoUtility.JustifyContent.CENTER, LumoUtility.Margin.Bottom.MEDIUM, LumoUtility.Overflow.HIDDEN,
+                LumoUtility.BorderRadius.MEDIUM, LumoUtility.Width.FULL);
         div.setHeight("160px");
 
         Image image = new Image();
@@ -44,11 +35,11 @@ public class PlaylistsViewCard extends ListItem {
         div.add(image);
 
         Span header = new Span();
-        header.addClassNames(FontSize.XLARGE, FontWeight.SEMIBOLD);
+        header.addClassNames(LumoUtility.FontSize.XLARGE, LumoUtility.FontWeight.SEMIBOLD);
         header.setText(text);
 
         Span subtitle = new Span();
-        subtitle.addClassNames(FontSize.SMALL, TextColor.SECONDARY);
+        subtitle.addClassNames(LumoUtility.FontSize.SMALL, LumoUtility.TextColor.SECONDARY);
 
         Button deleteButton = new Button("Delete playlist");
         deleteButton.addClickListener(e -> showDeleteConfirmationDialog());
@@ -67,6 +58,10 @@ public class PlaylistsViewCard extends ListItem {
 
         Button confirmButton = new Button("Delete");
         confirmButton.addClickListener(e -> {
+            Component parent = getParent().orElse(null);
+            if (parent instanceof VerticalLayout) {
+                ((VerticalLayout) parent).remove(this);
+            }
             dialog.close();
         });
 
@@ -81,6 +76,4 @@ public class PlaylistsViewCard extends ListItem {
         dialog.add(layout);
         dialog.open();
     }
-
-
 }

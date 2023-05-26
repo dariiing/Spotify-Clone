@@ -1,7 +1,11 @@
 package com.example.application.views.recommendations;
 
+import com.example.application.data.entity.LikedSongs;
 import com.example.application.data.entity.SongTable;
+import com.example.application.data.entity.User;
+import com.example.application.data.service.LikedSongsService;
 import com.example.application.data.service.SongTableService;
+import com.example.application.security.AuthenticatedUser;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -14,12 +18,14 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import com.vaadin.flow.theme.lumo.LumoUtility;
+import com.zaxxer.hikari.util.FastList;
 import jakarta.annotation.security.PermitAll;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -28,6 +34,8 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -41,9 +49,14 @@ public class RecommendationsView extends Div {
 
     private Filters filters;
     private final SongTableService songTableService;
+    private final LikedSongsService likedSongsService;
 
-    public RecommendationsView(SongTableService SongTableService) {
-        this.songTableService = SongTableService;
+    private final AuthenticatedUser authenticatedUser;
+
+    public RecommendationsView(AuthenticatedUser authenticatedUser,SongTableService songTableService, LikedSongsService likedSongsService) {
+        this.authenticatedUser = authenticatedUser;
+        this.songTableService = songTableService;
+        this.likedSongsService = likedSongsService;
         setSizeFull();
         addClassNames("recommendations-view");
 
@@ -154,6 +167,7 @@ public class RecommendationsView extends Div {
         grid.addComponentColumn(person -> {
             Button addToPlaylistButton = new Button(new Icon(VaadinIcon.HEART));
             addToPlaylistButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            addToPlaylistButton.addClickListener(e -> addToLikedSongs(person));
             return addToPlaylistButton;
         }).setHeader("Add to Liked Songs");
 
@@ -171,4 +185,24 @@ public class RecommendationsView extends Div {
         grid.getDataProvider().refreshAll();
     }
 
+    private void addToLikedSongs(SongTable song) {
+        Optional<User> optionalUser = authenticatedUser.get();
+        if (optionalUser.isPresent()) {
+            User currentUser = optionalUser.get();
+            LikedSongs likedSong = new LikedSongs();
+            likedSong.setSongName(song.getSongName());
+            likedSong.setArtistName(song.getArtistName());
+            likedSong.setAlbumName(song.getAlbumName());
+            likedSong.setUser(currentUser);
+
+            // Save the liked song using the LikedSongsService
+            likedSongsService.update(likedSong);
+
+            // Optional: Show a notification or perform any other desired action
+            Notification.show("Song added to Liked Songs");
+        } else {
+            // Handle the case when the current user is not available
+            Notification.show("User not logged in");
+        }
+    }
 }

@@ -1,7 +1,7 @@
 package com.example.application.views.likedsongs;
 
-import com.example.application.data.entity.SongTable;
-import com.example.application.data.service.SongTableService;
+import com.example.application.data.entity.LikedSongs;
+import com.example.application.data.service.LikedSongsService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -12,6 +12,7 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -36,13 +37,13 @@ import org.springframework.data.jpa.domain.Specification;
 @Uses(Icon.class)
 public class LikedSongsView extends Div {
 
-    private Grid<SongTable> grid;
+    private Grid<LikedSongs> grid;
 
     private Filters filters;
-    private final SongTableService songTableService;
+    private final LikedSongsService likedSongsService;
 
-    public LikedSongsView(SongTableService SongTableService) {
-        this.songTableService = SongTableService;
+    public LikedSongsView(LikedSongsService likedSongsService) {
+        this.likedSongsService = likedSongsService;
         setSizeFull();
         addClassNames("liked-songs-view");
 
@@ -78,10 +79,10 @@ public class LikedSongsView extends Div {
         return mobileFilters;
     }
 
-    public static class Filters extends Div implements Specification<SongTable> {
+    public static class Filters extends Div implements Specification<LikedSongs> {
 
-        private final TextField name = new TextField("Song Name");
-        private final TextField phone = new TextField("Artist Name");
+        private final TextField songName = new TextField("Song/Artist Name");
+//        private final TextField artistName = new TextField("Artist Name");
 
 
         public Filters(Runnable onSearch) {
@@ -90,16 +91,16 @@ public class LikedSongsView extends Div {
             addClassName("filter-layout");
             addClassNames(LumoUtility.Padding.Horizontal.LARGE, LumoUtility.Padding.Vertical.MEDIUM,
                     LumoUtility.BoxSizing.BORDER);
-            name.setPlaceholder("Thriller");
-            phone.setPlaceholder("Michael Jackson");
+            songName.setPlaceholder("Thriller/Michael Jackson");
+//            artistName.setPlaceholder("Michael Jackson");
 
 
             // Action buttons
             Button resetBtn = new Button("Reset");
             resetBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
             resetBtn.addClickListener(e -> {
-                name.clear();
-                phone.clear();
+                songName.clear();
+//                artistName.clear();
                 onSearch.run();
             });
             Button searchBtn = new Button("Search");
@@ -110,32 +111,29 @@ public class LikedSongsView extends Div {
             actions.addClassName(LumoUtility.Gap.SMALL);
             actions.addClassName("actions");
 
-            add(name, phone,actions);
+            add(songName,actions);
         }
 
         @Override
-        public Predicate toPredicate(Root<SongTable> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+        public Predicate toPredicate(Root<LikedSongs> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
             List<Predicate> predicates = new ArrayList<>();
 
-            if (!name.isEmpty()) {
-                String lowerCaseFilter = name.getValue().toLowerCase();
-                Predicate firstNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("songName")),
+            if (!songName.isEmpty()) {
+                String lowerCaseFilter = songName.getValue().toLowerCase();
+                Predicate songNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("songName")),
                         lowerCaseFilter + "%");
-                Predicate lastNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("artistName")),
+                Predicate artistNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("artistName")),
                         lowerCaseFilter + "%");
-                predicates.add(criteriaBuilder.or(firstNameMatch, lastNameMatch));
+                predicates.add(criteriaBuilder.or(songNameMatch,artistNameMatch));
             }
-            if (!phone.isEmpty()) {
-                String databaseColumn = "phone";
-                String ignore = "- ()";
-
-                String lowerCaseFilter = ignoreCharacters(ignore, phone.getValue().toLowerCase());
-                Predicate phoneMatch = criteriaBuilder.like(
-                        ignoreCharacters(ignore, criteriaBuilder, criteriaBuilder.lower(root.get(databaseColumn))),
-                        "%" + lowerCaseFilter + "%");
-                predicates.add(phoneMatch);
-
-            }
+//            if (!artistName.isEmpty()) {
+//                String lowerCaseFilter = songName.getValue().toLowerCase();
+//
+//                Predicate artistNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("artistName")),
+//                        lowerCaseFilter + "%");
+//                predicates.add(criteriaBuilder.or(artistNameMatch));
+//
+//            }
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
         }
 
@@ -160,13 +158,13 @@ public class LikedSongsView extends Div {
     }
 
     private Component createGrid() {
-        grid = new Grid<>(SongTable.class, false);
+        grid = new Grid<>(LikedSongs.class, false);
 
         grid.addColumn("songName").setAutoWidth(true);
         grid.addColumn("artistName").setAutoWidth(true);
         grid.addColumn("albumName").setAutoWidth(true);
 
-        grid.setItems(query -> songTableService.list(
+        grid.setItems(query -> likedSongsService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),
                 filters).stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
@@ -187,13 +185,20 @@ public class LikedSongsView extends Div {
         }).setHeader("Add to Playlist");
 
         //remove song
-        grid.addComponentColumn(person -> {
+        grid.addComponentColumn(likedSong -> {
             Button deleteButton = new Button(new Icon("lumo", "minus"));
             deleteButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            deleteButton.addClickListener(event -> deleteLikedSong(likedSong));
             return deleteButton;
         }).setHeader("Remove");
 
         return grid;
+    }
+
+    private void deleteLikedSong(LikedSongs likedSong) {
+        likedSongsService.delete(likedSong.getId());
+        Notification.show("Song removed from liked songs");
+        refreshGrid();
     }
 
     private void refreshGrid() {
