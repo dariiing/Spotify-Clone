@@ -49,7 +49,6 @@ public class PlaylistsViewCard extends ListItem {
 
         Span subtitle = new Span();
         subtitle.addClassNames(FontSize.SMALL, TextColor.SECONDARY);
-        // subtitle.setText("Created by John");
 
         Button deleteButton = new Button("Delete playlist");
         deleteButton.addClickListener(e -> showDeleteConfirmationDialog());

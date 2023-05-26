@@ -1,23 +1,17 @@
 package com.example.application.views.likedsongs;
 
-import com.example.application.data.entity.SamplePerson;
-import com.example.application.data.service.SamplePersonService;
+import com.example.application.data.entity.SongTable;
+import com.example.application.data.service.SongTableService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.checkbox.CheckboxGroup;
-import com.vaadin.flow.component.combobox.MultiSelectComboBox;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -42,13 +36,13 @@ import org.springframework.data.jpa.domain.Specification;
 @Uses(Icon.class)
 public class LikedSongsView extends Div {
 
-    private Grid<SamplePerson> grid;
+    private Grid<SongTable> grid;
 
     private Filters filters;
-    private final SamplePersonService samplePersonService;
+    private final SongTableService songTableService;
 
-    public LikedSongsView(SamplePersonService SamplePersonService) {
-        this.samplePersonService = SamplePersonService;
+    public LikedSongsView(SongTableService SongTableService) {
+        this.songTableService = SongTableService;
         setSizeFull();
         addClassNames("liked-songs-view");
 
@@ -84,7 +78,7 @@ public class LikedSongsView extends Div {
         return mobileFilters;
     }
 
-    public static class Filters extends Div implements Specification<SamplePerson> {
+    public static class Filters extends Div implements Specification<SongTable> {
 
         private final TextField name = new TextField("Song Name");
         private final TextField phone = new TextField("Artist Name");
@@ -119,37 +113,15 @@ public class LikedSongsView extends Div {
             add(name, phone,actions);
         }
 
-//        private Component createDateRangeFilter() {
-//            startDate.setPlaceholder("From");
-//
-//            endDate.setPlaceholder("To");
-//
-//            // For screen readers
-//            setAriaLabel(startDate, "From date");
-//            setAriaLabel(endDate, "To date");
-//
-//            FlexLayout dateRangeComponent = new FlexLayout(startDate, new Text(" – "), endDate);
-//            dateRangeComponent.setAlignItems(FlexComponent.Alignment.BASELINE);
-//            dateRangeComponent.addClassName(LumoUtility.Gap.XSMALL);
-//
-//            return dateRangeComponent;
-//        }
-
-        private void setAriaLabel(DatePicker datePicker, String label) {
-            datePicker.getElement().executeJs("const input = this.inputElement;" //
-                    + "input.setAttribute('aria-label', $0);" //
-                    + "input.removeAttribute('aria-labelledby');", label);
-        }
-
         @Override
-        public Predicate toPredicate(Root<SamplePerson> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+        public Predicate toPredicate(Root<SongTable> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
             List<Predicate> predicates = new ArrayList<>();
 
             if (!name.isEmpty()) {
                 String lowerCaseFilter = name.getValue().toLowerCase();
-                Predicate firstNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("firstName")),
+                Predicate firstNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("songName")),
                         lowerCaseFilter + "%");
-                Predicate lastNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("lastName")),
+                Predicate lastNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("artistName")),
                         lowerCaseFilter + "%");
                 predicates.add(criteriaBuilder.or(firstNameMatch, lastNameMatch));
             }
@@ -188,13 +160,13 @@ public class LikedSongsView extends Div {
     }
 
     private Component createGrid() {
-        grid = new Grid<>(SamplePerson.class, false);
+        grid = new Grid<>(SongTable.class, false);
 
-        grid.addColumn("firstName").setAutoWidth(true);
-        grid.addColumn("lastName").setAutoWidth(true);
-        grid.addColumn("email").setAutoWidth(true);
+        grid.addColumn("songName").setAutoWidth(true);
+        grid.addColumn("artistName").setAutoWidth(true);
+        grid.addColumn("albumName").setAutoWidth(true);
 
-        grid.setItems(query -> samplePersonService.list(
+        grid.setItems(query -> songTableService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),
                 filters).stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);

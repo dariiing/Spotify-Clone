@@ -1,14 +1,11 @@
 package com.example.application.views.editaccount;
 
-import com.example.application.data.entity.SamplePerson;
-import com.example.application.data.service.SamplePersonService;
+import com.example.application.data.entity.SongTable;
+import com.example.application.data.service.SongTableService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.combobox.ComboBox;
-import com.vaadin.flow.component.customfield.CustomField;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
@@ -35,9 +32,9 @@ public class EditAccountView extends Div {
     private Button cancel = new Button("Cancel");
     private Button save = new Button("Save");
 
-    private Binder<SamplePerson> binder = new Binder<>(SamplePerson.class);
+    private Binder<SongTable> binder = new Binder<>(SongTable.class);
 
-    public EditAccountView(SamplePersonService personService) {
+    public EditAccountView(SongTableService personService) {
         addClassName("edit-account-view");
 
         add(createTitle());
@@ -56,7 +53,7 @@ public class EditAccountView extends Div {
     }
 
     private void clearForm() {
-        binder.setBean(new SamplePerson());
+        binder.setBean(new SongTable());
     }
 
     private Component createTitle() {

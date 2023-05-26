@@ -92,10 +92,10 @@ public class MainLayout extends AppLayout {
             nav.addItem(new AppNavItem("Recommendations", RecommendationsView.class, LineAwesomeIcon.STAR.create()));
 
         }
-        if (accessChecker.hasAccess(EditAccountView.class)) {
-            nav.addItem(new AppNavItem("Edit Account", EditAccountView.class, LineAwesomeIcon.USER.create()));
-
-        }
+//        if (accessChecker.hasAccess(EditAccountView.class)) {
+//            nav.addItem(new AppNavItem("Edit Account", EditAccountView.class, LineAwesomeIcon.USER.create()));
+//
+//        }
 
         return nav;
     }

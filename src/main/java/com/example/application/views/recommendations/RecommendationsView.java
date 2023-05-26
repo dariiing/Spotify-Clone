@@ -1,15 +1,11 @@
 package com.example.application.views.recommendations;
 
-import com.example.application.data.entity.SamplePerson;
-import com.example.application.data.service.SamplePersonService;
+import com.example.application.data.entity.SongTable;
+import com.example.application.data.service.SongTableService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.checkbox.CheckboxGroup;
-import com.vaadin.flow.component.combobox.MultiSelectComboBox;
-import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -18,11 +14,8 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.orderedlayout.FlexComponent;
-import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
@@ -44,13 +37,13 @@ import org.springframework.data.jpa.domain.Specification;
 @Uses(Icon.class)
 public class RecommendationsView extends Div {
 
-    private Grid<SamplePerson> grid;
+    private Grid<SongTable> grid;
 
     private Filters filters;
-    private final SamplePersonService samplePersonService;
+    private final SongTableService songTableService;
 
-    public RecommendationsView(SamplePersonService SamplePersonService) {
-        this.samplePersonService = SamplePersonService;
+    public RecommendationsView(SongTableService SongTableService) {
+        this.songTableService = SongTableService;
         setSizeFull();
         addClassNames("recommendations-view");
 
@@ -86,7 +79,7 @@ public class RecommendationsView extends Div {
         return mobileFilters;
     }
 
-    public static class Filters extends Div implements Specification<SamplePerson> {
+    public static class Filters extends Div implements Specification<SongTable> {
 
 
         public Filters(Runnable onSearch) {
@@ -112,15 +105,8 @@ public class RecommendationsView extends Div {
             add(actions);
         }
 
-
-        private void setAriaLabel(DatePicker datePicker, String label) {
-            datePicker.getElement().executeJs("const input = this.inputElement;" //
-                    + "input.setAttribute('aria-label', $0);" //
-                    + "input.removeAttribute('aria-labelledby');", label);
-        }
-
         @Override
-        public Predicate toPredicate(Root<SamplePerson> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
+        public Predicate toPredicate(Root<SongTable> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
             List<Predicate> predicates = new ArrayList<>();
 
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
@@ -147,12 +133,12 @@ public class RecommendationsView extends Div {
     }
 
     private Component createGrid() {
-        grid = new Grid<>(SamplePerson.class, false);
-        grid.addColumn("firstName").setAutoWidth(true);
-        grid.addColumn("lastName").setAutoWidth(true);
-        grid.addColumn("email").setAutoWidth(true);
+        grid = new Grid<>(SongTable.class, false);
+        grid.addColumn("songName").setAutoWidth(true);
+        grid.addColumn("artistName").setAutoWidth(true);
+        grid.addColumn("albumName").setAutoWidth(true);
 
-        grid.setItems(query -> samplePersonService.list(
+        grid.setItems(query -> songTableService.list(
                 PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),
                 filters).stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
