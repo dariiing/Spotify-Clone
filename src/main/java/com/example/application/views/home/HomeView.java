@@ -105,7 +105,7 @@ public class HomeView extends Div {
             addClassName("filter-layout");
             addClassNames(LumoUtility.Padding.Horizontal.LARGE, LumoUtility.Padding.Vertical.MEDIUM,
                     LumoUtility.BoxSizing.BORDER);
-            songName.setPlaceholder("Thriller/Michael Jackson");
+            songName.setPlaceholder("Song/Artist Name");
 //            artistName.setPlaceholder("Michael Jackson");
 
             // Action buttons
