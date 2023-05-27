@@ -9,6 +9,7 @@ public class LikedSongs extends AbstractEntity {
     private String songName;
     private String artistName;
     private String albumName;
+    private String genre;
 
     @ManyToOne
     private User user;
@@ -35,6 +36,14 @@ public class LikedSongs extends AbstractEntity {
 
     public void setAlbumName(String albumName) {
         this.albumName = albumName;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
     }
 
     public User getUser() {

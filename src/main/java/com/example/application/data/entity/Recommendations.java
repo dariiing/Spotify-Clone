@@ -1,23 +1,29 @@
 package com.example.application.data.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 @Entity
-public class SongTable extends AbstractEntity {
+public class Recommendations extends AbstractEntity {
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     private String songName;
     private String artistName;
-
     private String albumName;
-
     private String genre;
 
-    public String getGenre() {
-        return genre;
+    // Other recommendation-related attributes or properties
+
+    public User getUser() {
+        return user;
     }
 
-    public void setGenre(String genre) {
-        this.genre = genre;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getSongName() {
@@ -44,5 +50,14 @@ public class SongTable extends AbstractEntity {
         this.albumName = albumName;
     }
 
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    // Other getters and setters for recommendation-related attributes
 
 }

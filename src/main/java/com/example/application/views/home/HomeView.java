@@ -222,6 +222,7 @@ public class HomeView extends Div {
             likedSong.setSongName(song.getSongName());
             likedSong.setArtistName(song.getArtistName());
             likedSong.setAlbumName(song.getAlbumName());
+            likedSong.setGenre(song.getGenre());
             likedSong.setUser(currentUser);
 
             // Save the liked song using the LikedSongsService
