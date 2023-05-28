@@ -77,52 +77,47 @@ CREATE TRIGGER check_duplicate_song_trigger
     FOR EACH ROW
     EXECUTE FUNCTION check_duplicate_song();
 
--- am folosit functia asta temporar pentru recomandari, dar nu prea are sens sa fie acolo
+
+-- recomandari
 CREATE OR REPLACE FUNCTION add_recommendations()
 RETURNS TRIGGER AS $$
+DECLARE
+genre_var VARCHAR;
+    song_row RECORD;
+    most_frequent_genre VARCHAR;
+    max_genre_count INTEGER := 0;
+    song_limit INTEGER := 10;
+    song_counter INTEGER := 0;
 BEGIN
-    -- Generate a new id for the Recommendations entry
-    NEW.id := nextval('idgenerator');
+FOR song_row IN (SELECT genre, COUNT(*) AS genre_count FROM liked_songs GROUP BY genre) LOOP
+        IF song_row.genre_count > max_genre_count THEN
+            max_genre_count := song_row.genre_count;
+            most_frequent_genre := song_row.genre;
+END IF;
+END LOOP;
 
-    -- Insert the record into Recommendations
-    INSERT INTO Recommendations (id, user_id, song_name, artist_name, album_name, genre)
-    VALUES (NEW.id, NEW.user_id, NEW.song_name, NEW.artist_name, NEW.album_name, NEW.genre);
+-- Refresh recommendations
+DELETE FROM recommendations;
 
-    RETURN NULL;
+FOR song_row IN (
+        SELECT *
+        FROM song_table
+        WHERE genre = most_frequent_genre
+        AND song_name NOT IN (SELECT song_name FROM liked_songs)
+        ORDER BY random()
+    ) LOOP
+        EXIT WHEN song_counter >= song_limit;
+
+        NEW.id := nextval('idgenerator');
+INSERT INTO Recommendations (id, user_id, song_name, artist_name, album_name, genre)
+VALUES (NEW.id, NEW.user_id, song_row.song_name, song_row.artist_name, song_row.album_name, most_frequent_genre);
+
+song_counter := song_counter + 1;
+END LOOP;
+
+RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
-
--- am incercat sa matchuiesc dupa genre si primesc erori
--- CREATE OR REPLACE FUNCTION add_recommendations()
--- RETURNS TRIGGER AS $$
--- DECLARE
--- majority_genre TEXT;
--- BEGIN
---     -- Get the majority genre among liked songs
--- SELECT genre
--- INTO majority_genre
--- FROM (
---          SELECT genre, COUNT(*) AS genre_count
---          FROM liked_songs
---          GROUP BY genre
---          ORDER BY genre_count DESC
---              LIMIT 1
---      ) AS subquery;
---
---
--- NEW.id := nextval('idgenerator');
---
---
---
--- INSERT INTO Recommendations (id, version, user_id, song_name, artist_name, album_name, genre)
--- SELECT NEW.id, 1, NEW.user_id, st.song_name, st.artist_name, st.album_name, st.genre
--- FROM song_table st
--- WHERE st.genre = majority_genre;
---
--- RETURN NULL;
--- END;
--- $$ LANGUAGE plpgsql;
-
 
 
 CREATE TRIGGER add_recommendations_trigger

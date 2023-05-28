@@ -73,37 +73,11 @@ public class RecommendationsView extends Div {
         addClassNames("recommendations-view");
 
         filters = new Filters(() -> refreshGrid());
-        VerticalLayout layout = new VerticalLayout(createMobileFilters(), filters,createArtistGenreSection(), createGrid());
+        VerticalLayout layout = new VerticalLayout(createMobileFilters(), filters, createGrid());
         layout.setSizeFull();
         layout.setPadding(false);
         layout.setSpacing(false);
         add(layout);
-    }
-
-    private Component createArtistGenreSection() {
-        Div artistNameDiv = new Div();
-        artistNameDiv.setText("Your most liked artist:");
-        artistNameDiv.addClassName("section-label");
-
-        Div genreNameDiv = new Div();
-        genreNameDiv.setText("Your most liked genre:");
-        genreNameDiv.addClassName("section-label");
-
-        Div mostLikedArtistDiv = new Div();
-//        mostLikedArtistDiv.setText(getMostLikedArtist());
-        mostLikedArtistDiv.addClassName("section-value");
-
-        Div mostLikedGenreDiv = new Div();
-        mostLikedGenreDiv.setText("gen1");
-        mostLikedGenreDiv.addClassName("section-value");
-
-        HorizontalLayout artistGenreLayout = new HorizontalLayout(artistNameDiv, mostLikedArtistDiv, genreNameDiv, mostLikedGenreDiv);
-        artistGenreLayout.setWidthFull();
-        artistGenreLayout.setSpacing(true);
-        artistGenreLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
-        artistGenreLayout.addClassName("artist-genre-layout");
-
-        return artistGenreLayout;
     }
 
     private HorizontalLayout createMobileFilters() {
