@@ -113,17 +113,8 @@ public class RecommendationsView extends Div {
             addClassName("filter-layout");
             addClassNames(LumoUtility.Padding.Horizontal.LARGE, LumoUtility.Padding.Vertical.MEDIUM,
                     LumoUtility.BoxSizing.BORDER);
-
-            // Action buttons
-            Button resetBtn = new Button("Refresh");
-            resetBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            resetBtn.addClickListener(e -> {
-                onSearch.run();
-            });
-
-            Label label = new Label("Song recommendations based on your liked songs");
-
-            Div actions = new Div(label, resetBtn);
+            Label label = new Label("Here are some song recommendations based on your liked songs");
+            Div actions = new Div(label);
             actions.addClassName(LumoUtility.Gap.SMALL);
             actions.addClassName("actions");
             add(actions);
@@ -135,24 +126,24 @@ public class RecommendationsView extends Div {
 
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
         }
+//
+//        private String ignoreCharacters(String characters, String in) {
+//            String result = in;
+//            for (int i = 0; i < characters.length(); i++) {
+//                result = result.replace("" + characters.charAt(i), "");
+//            }
+//            return result;
+//        }
 
-        private String ignoreCharacters(String characters, String in) {
-            String result = in;
-            for (int i = 0; i < characters.length(); i++) {
-                result = result.replace("" + characters.charAt(i), "");
-            }
-            return result;
-        }
-
-        private Expression<String> ignoreCharacters(String characters, CriteriaBuilder criteriaBuilder,
-                Expression<String> inExpression) {
-            Expression<String> expression = inExpression;
-            for (int i = 0; i < characters.length(); i++) {
-                expression = criteriaBuilder.function("replace", String.class, expression,
-                        criteriaBuilder.literal(characters.charAt(i)), criteriaBuilder.literal(""));
-            }
-            return expression;
-        }
+//        private Expression<String> ignoreCharacters(String characters, CriteriaBuilder criteriaBuilder,
+//                Expression<String> inExpression) {
+//            Expression<String> expression = inExpression;
+//            for (int i = 0; i < characters.length(); i++) {
+//                expression = criteriaBuilder.function("replace", String.class, expression,
+//                        criteriaBuilder.literal(characters.charAt(i)), criteriaBuilder.literal(""));
+//            }
+//            return expression;
+//        }
 
     }
 
