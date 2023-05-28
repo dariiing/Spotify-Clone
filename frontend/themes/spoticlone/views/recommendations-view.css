@@ -75,3 +75,19 @@
     color: var(--lumo-body-text-color);
   }
 }
+
+.section-label {
+  font-weight: bold;
+}
+
+.section-value {
+  font-style: italic;
+}
+
+.artist-genre-layout .section-label {
+  margin-right: 10px;
+}
+
+.artist-genre-layout .section-value {
+  margin-left: 10px;
+}

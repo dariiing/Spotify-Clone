@@ -15,9 +15,9 @@ public abstract class AbstractEntity {
     @SequenceGenerator(name = "idgenerator", initialValue = 1000)
     private Long id;
 
-    @Version
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int version;
+//    @Version
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private int version;
 
     public Long getId() {
         return id;
@@ -27,9 +27,9 @@ public abstract class AbstractEntity {
         this.id = id;
     }
 
-    public int getVersion() {
-        return version;
-    }
+//    public int getVersion() {
+//        return version;
+//    }
 
     @Override
     public int hashCode() {

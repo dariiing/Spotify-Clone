@@ -3,7 +3,6 @@ CREATE OR REPLACE PROCEDURE import_song_data()
 AS $$
 BEGIN
   CREATE TEMPORARY TABLE temp_song_table (
-    version INTEGER,
     id INTEGER,
     song_name VARCHAR(255),
     artist_name VARCHAR(255),
@@ -12,7 +11,7 @@ BEGIN
   );
 
 BEGIN
-COPY temp_song_table (version, id, song_name, artist_name, album_name, genre)
+COPY temp_song_table ( id, song_name, artist_name, album_name, genre)
     FROM 'C:\Users\daria\OneDrive\Desktop\spoticlone\src\main\resources\songs.csv'
     DELIMITER ',' CSV HEADER;
 EXCEPTION
@@ -20,8 +19,8 @@ EXCEPTION
       RAISE EXCEPTION 'Error importing data from CSV: %', SQLERRM;
 END;
 
-INSERT INTO song_table (version, id, song_name, artist_name, album_name, genre)
-SELECT version, id, song_name, artist_name, album_name, genre
+INSERT INTO song_table ( id, song_name, artist_name, album_name, genre)
+SELECT  id, song_name, artist_name, album_name, genre
 FROM temp_song_table;
 
 DROP TABLE temp_song_table;
@@ -32,11 +31,11 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE PROCEDURE import_user_data()
 AS $$
 BEGIN
-INSERT INTO application_user (version, id, username, name, hashed_password, profile_picture)
-VALUES (1, '1', 'daria', 'Daria', '$2a$10$xdbKoM48VySZqVSU/cSlVeJn0Z04XCZ7KZBjUBC00eKo5uLswyOpe', NULL);
+INSERT INTO application_user ( id, username, name, hashed_password, profile_picture)
+VALUES ( '1', 'daria', 'Daria', '$2a$10$xdbKoM48VySZqVSU/cSlVeJn0Z04XCZ7KZBjUBC00eKo5uLswyOpe', NULL);
 
-INSERT INTO application_user (version, id, username, name, hashed_password, profile_picture)
-VALUES (1, '2', 'ana', 'Ana', '$2a$10$xdbKoM48VySZqVSU/cSlVeJn0Z04XCZ7KZBjUBC00eKo5uLswyOpe', NULL);
+INSERT INTO application_user ( id, username, name, hashed_password, profile_picture)
+VALUES ( '2', 'ana', 'Ana', '$2a$10$xdbKoM48VySZqVSU/cSlVeJn0Z04XCZ7KZBjUBC00eKo5uLswyOpe', NULL);
 END;
 $$ LANGUAGE plpgsql;
 
@@ -86,8 +85,8 @@ BEGIN
     NEW.id := nextval('idgenerator');
 
     -- Insert the record into Recommendations
-    INSERT INTO Recommendations (id, version, user_id, song_name, artist_name, album_name, genre)
-    VALUES (NEW.id, 1, NEW.user_id, NEW.song_name, NEW.artist_name, NEW.album_name, NEW.genre);
+    INSERT INTO Recommendations (id, user_id, song_name, artist_name, album_name, genre)
+    VALUES (NEW.id, NEW.user_id, NEW.song_name, NEW.artist_name, NEW.album_name, NEW.genre);
 
     RETURN NULL;
 END;

@@ -21,6 +21,7 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
@@ -28,6 +29,9 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.data.VaadinSpringDataHelpers;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.PermitAll;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
@@ -39,6 +43,7 @@ import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+
 
 @PageTitle("Recommendations")
 @Route(value = "recommendations", layout = MainLayout.class)
@@ -56,6 +61,7 @@ public class RecommendationsView extends Div {
 
     private final RecommendationService recommendationService;
 
+
     public RecommendationsView(AuthenticatedUser authenticatedUser, SongTableService songTableService,
                                LikedSongsService likedSongsService, RecommendationService recommendationService) {
         this.authenticatedUser = authenticatedUser;
@@ -67,11 +73,37 @@ public class RecommendationsView extends Div {
         addClassNames("recommendations-view");
 
         filters = new Filters(() -> refreshGrid());
-        VerticalLayout layout = new VerticalLayout(createMobileFilters(), filters, createGrid());
+        VerticalLayout layout = new VerticalLayout(createMobileFilters(), filters,createArtistGenreSection(), createGrid());
         layout.setSizeFull();
         layout.setPadding(false);
         layout.setSpacing(false);
         add(layout);
+    }
+
+    private Component createArtistGenreSection() {
+        Div artistNameDiv = new Div();
+        artistNameDiv.setText("Your most liked artist:");
+        artistNameDiv.addClassName("section-label");
+
+        Div genreNameDiv = new Div();
+        genreNameDiv.setText("Your most liked genre:");
+        genreNameDiv.addClassName("section-label");
+
+        Div mostLikedArtistDiv = new Div();
+//        mostLikedArtistDiv.setText(getMostLikedArtist());
+        mostLikedArtistDiv.addClassName("section-value");
+
+        Div mostLikedGenreDiv = new Div();
+        mostLikedGenreDiv.setText("gen1");
+        mostLikedGenreDiv.addClassName("section-value");
+
+        HorizontalLayout artistGenreLayout = new HorizontalLayout(artistNameDiv, mostLikedArtistDiv, genreNameDiv, mostLikedGenreDiv);
+        artistGenreLayout.setWidthFull();
+        artistGenreLayout.setSpacing(true);
+        artistGenreLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        artistGenreLayout.addClassName("artist-genre-layout");
+
+        return artistGenreLayout;
     }
 
     private HorizontalLayout createMobileFilters() {
