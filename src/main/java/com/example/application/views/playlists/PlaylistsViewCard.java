@@ -41,10 +41,10 @@ public class PlaylistsViewCard extends ListItem {
         Span subtitle = new Span();
         subtitle.addClassNames(LumoUtility.FontSize.SMALL, LumoUtility.TextColor.SECONDARY);
 
-        Button deleteButton = new Button("Delete playlist");
-        deleteButton.addClickListener(e -> showDeleteConfirmationDialog());
+//        Button deleteButton = new Button("Delete playlist");
+//        deleteButton.addClickListener(e -> showDeleteConfirmationDialog());
 
-        add(div, header, subtitle, deleteButton);
+        add(div, header, subtitle);
     }
 
     private void showDeleteConfirmationDialog() {

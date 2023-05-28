@@ -11,3 +11,14 @@
   background-color: var(--lumo-base-color);
   box-shadow: var(--lumo-box-shadow-s);
 }
+
+.playlist-cards {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  justify-items: center;
+}
+
+.playlist-cards ::slotted(li) {
+  margin-bottom: 1rem;
+  width: 100%;
+  max-width: 200px;
+}
