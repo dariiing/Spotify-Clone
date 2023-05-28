@@ -1,6 +1,8 @@
 package com.example.application.data.service;
 
+import com.example.application.data.entity.LikedSongs;
 import com.example.application.data.entity.Playlist;
+import com.example.application.data.entity.SongTable;
 import com.example.application.data.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,9 +15,11 @@ import java.util.Optional;
 public class PlaylistService {
 
     private final PlaylistRepository repository;
+    private final songTableRepository songTableRepository;
 
-    public PlaylistService(PlaylistRepository repository) {
+    public PlaylistService(PlaylistRepository repository, songTableRepository songTableRepository) {
         this.repository = repository;
+        this.songTableRepository = songTableRepository;
     }
 
     public Optional<Playlist> get(Long id) {

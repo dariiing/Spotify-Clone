@@ -1,9 +1,11 @@
 package com.example.application.views.home;
 
 import com.example.application.data.entity.LikedSongs;
+import com.example.application.data.entity.Playlist;
 import com.example.application.data.entity.SongTable;
 import com.example.application.data.entity.User;
 import com.example.application.data.service.LikedSongsService;
+import com.example.application.data.service.PlaylistService;
 import com.example.application.data.service.SongTableService;
 import com.example.application.security.AuthenticatedUser;
 import com.example.application.views.MainLayout;
@@ -11,12 +13,15 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.Uses;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -38,6 +43,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -62,12 +68,15 @@ public class HomeView extends Div {
 
     private final AuthenticatedUser authenticatedUser;
 
-    public HomeView(AuthenticatedUser authenticatedUser,SongTableService songTableService, LikedSongsService likedSongsService) {
+    private final PlaylistService playlistService;
+
+    public HomeView(AuthenticatedUser authenticatedUser,SongTableService songTableService, LikedSongsService likedSongsService,PlaylistService playlistService) {
         this.authenticatedUser = authenticatedUser;
         this.songTableService = songTableService;
         this.likedSongsService = likedSongsService;
         this.currentClip = null;
         this.currentPath = "";
+        this.playlistService = playlistService;
         setSizeFull();
         addClassNames("home-view");
 
@@ -214,10 +223,40 @@ public class HomeView extends Div {
         grid.addComponentColumn(person -> {
             Button addToPlaylistButton = new Button(new Icon("lumo", "plus"));
             addToPlaylistButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            addToPlaylistButton.addClickListener(e -> openAddToPlaylistDialog(person));
             return addToPlaylistButton;
         }).setHeader("Add to Playlist");
 
         return grid;
+    }
+
+    private void openAddToPlaylistDialog(SongTable song) {
+        Dialog dialog = new Dialog();
+        dialog.setCloseOnEsc(true);
+        dialog.setCloseOnOutsideClick(true);
+
+        Label titleLabel = new Label("Add to Playlist");
+//        MultiSelectListBox<Playlist> playlistListBox = new MultiSelectListBox<>();
+////        playlistService.getAllPlaylists()
+//        List<Playlist> availablePlaylists = null;
+//        playlistListBox.setItems(availablePlaylists);
+
+        Button addButton = new Button("Add");
+        addButton.addClickListener(e -> {
+//            Set<Playlist> selectedPlaylists = playlistListBox.getSelectedItems();
+            // Add the song to the selected playlists
+//            for (Playlist playlist : selectedPlaylists) {
+//                playlist.getSongs().add(song);
+//            }
+            dialog.close();
+            Notification.show("Song added to playlists");
+        });
+
+        Button cancelButton = new Button("Cancel");
+        cancelButton.addClickListener(e -> dialog.close());
+
+        dialog.add(titleLabel,new HorizontalLayout(addButton, cancelButton));
+        dialog.open();
     }
 
     private void refreshGrid() {

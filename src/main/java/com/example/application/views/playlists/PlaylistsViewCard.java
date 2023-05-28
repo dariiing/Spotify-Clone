@@ -4,10 +4,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.ListItem;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -45,7 +42,51 @@ public class PlaylistsViewCard extends ListItem {
 //        deleteButton.addClickListener(e -> showDeleteConfirmationDialog());
 
         add(div, header, subtitle);
+
+        addClickListener(e -> showSongsDialog(text));
     }
+
+    private void showSongsDialog(String playlistName) {
+        // Create a dialog to display the songs
+        Dialog dialog = new Dialog();
+        dialog.setWidth("800px");
+        dialog.setHeight("600px");
+        dialog.setCloseOnEsc(false);
+        dialog.setCloseOnOutsideClick(true);
+
+        VerticalLayout layout = new VerticalLayout();
+        layout.setSizeFull();
+        layout.setPadding(true);
+        layout.setSpacing(true);
+        layout.setDefaultHorizontalComponentAlignment(FlexComponent.Alignment.CENTER);
+
+        H2 playlistHeading = new H2(playlistName);
+        layout.add(playlistHeading);
+
+        // Create a scrollable layout for the songs
+        Div songsContainer = new Div();
+        songsContainer.getStyle().set("max-height", "300px");
+        songsContainer.getStyle().set("overflow-y", "auto");
+
+        OrderedList songList = new OrderedList();
+        songList.add(new ListItem("Song 1"));
+        songList.add(new ListItem("Song 2"));
+        // Add more songs to the list
+
+        songsContainer.add(songList);
+        layout.add(songsContainer);
+
+        Button closeButton = new Button("Close");
+        closeButton.addClickListener(event -> dialog.close());
+        HorizontalLayout buttonContainer = new HorizontalLayout(closeButton);
+        buttonContainer.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        layout.add(buttonContainer);
+
+        dialog.add(layout);
+        dialog.open();
+    }
+
+
 
     private void showDeleteConfirmationDialog() {
         Dialog dialog = new Dialog();

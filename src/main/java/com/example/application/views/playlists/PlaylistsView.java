@@ -61,10 +61,13 @@ public class PlaylistsView extends Main {
         User currentUser = userService.getCurrentUser();
         List<Playlist> playlists = playlistService.findByUser(currentUser);
 
-        // Create playlist cards dynamically based on user's playlists
         for (Playlist playlist : playlists) {
-            imageContainer.add(new PlaylistsViewCard(playlist.getPlaylistName(), "https://images.unsplash.com/photo-1494232410401-ad00d5433cfa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"));
+            imageContainer.add(new PlaylistsViewCard(
+                    playlist.getPlaylistName(),
+                    "https://images.unsplash.com/photo-1494232410401-ad00d5433cfa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+            ));
         }
+
 
         addClassNames("playlists-view");
         addClassNames(MaxWidth.SCREEN_LARGE, Margin.Horizontal.AUTO, Padding.Bottom.LARGE, Padding.Horizontal.LARGE);
