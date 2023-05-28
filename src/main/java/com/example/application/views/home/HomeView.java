@@ -226,13 +226,18 @@ public class HomeView extends Div {
 
     private void handleButtonAction(Button button, String songFilePath) {
         String selectedPath = songFilePath; // name of the song
-        String songPath = "D:\\facultate\\anul 2\\Semestrul 2\\programare avansata(java)\\proiect java care merge(momentan)\\bag pula\\Spotify-Clone\\src\\main\\resources" + "\\" + songFilePath + ".wav";
+        String songPath = "C:\\Users\\daria\\OneDrive\\Desktop\\spoticlone\\src\\main\\resources" + "\\" + songFilePath + ".wav";
         Clip newClip = loadClip(songPath);
+        if (newClip == null) {
+            Notification.show("Song not downloaded");
+            return;
+        }
         if (currentClip == null) {
             if (newClip != null) {
                 play(newClip);
                 currentClip = newClip;
                 this.currentPath = selectedPath;
+                button.setIcon(VaadinIcon.PAUSE.create());
             }
         } else {
             if (!selectedPath.equalsIgnoreCase(currentPath)) {
@@ -240,17 +245,19 @@ public class HomeView extends Div {
                 play(newClip);
                 currentClip = newClip;
                 this.currentPath = selectedPath;
+                button.setIcon(VaadinIcon.PAUSE.create());
             } else {
                 if (currentClip.isRunning()) {
                     pause(currentClip);
+                    button.setIcon(new Icon("lumo", "play"));
                 } else {
                     resume(currentClip);
+                    button.setIcon(VaadinIcon.PAUSE.create());
                 }
             }
-
         }
-
     }
+
     private Clip loadClip(String songFilePath) {
         try {
             File songFile = new File(songFilePath);
