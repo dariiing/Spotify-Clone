@@ -55,7 +55,7 @@ CREATE TRIGGER validate_genre_trigger
     FOR EACH ROW
     EXECUTE FUNCTION validate_genre();
 
--- verifica melodii duplicate
+-- verifica melodii duplicate din tabelul cu melodii
 CREATE OR REPLACE FUNCTION check_duplicate_song()
   RETURNS TRIGGER AS $$
 BEGIN
@@ -129,3 +129,49 @@ CREATE TRIGGER add_recommendations_trigger
     AFTER INSERT ON liked_songs
     FOR EACH ROW
     EXECUTE FUNCTION add_recommendations();
+
+CREATE OR REPLACE FUNCTION delete_duplicate_liked_song()
+RETURNS TRIGGER AS
+$$
+BEGIN
+DELETE FROM liked_songs
+WHERE song_name = NEW.song_name
+  AND artist_name = NEW.artist_name
+  AND album_name = NEW.album_name
+  AND genre = NEW.genre
+  AND user_id = NEW.user_id
+  AND id <>(SELECT MAX(id) FROM liked_songs WHERE song_name = NEW.song_name AND artist_name = NEW.artist_name AND album_name = NEW.album_name AND genre = NEW.genre AND user_id = NEW.user_id);
+
+RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER delete_duplicate_liked_song_trigger
+    AFTER INSERT ON liked_songs
+    FOR EACH ROW
+    EXECUTE FUNCTION delete_duplicate_liked_song();
+
+
+CREATE OR REPLACE FUNCTION check_duplicate_liked_song()
+RETURNS TRIGGER AS
+$$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM liked_songs
+        WHERE song_name = NEW.song_name AND user_id = NEW.user_id
+    ) THEN
+        RAISE EXCEPTION 'The song is already liked by the user.';
+END IF;
+
+RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER prevent_duplicate_liked_song
+    BEFORE INSERT ON liked_songs
+    FOR EACH ROW
+    EXECUTE FUNCTION check_duplicate_liked_song();
+
