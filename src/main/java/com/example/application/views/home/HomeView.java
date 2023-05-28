@@ -32,12 +32,17 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.sound.sampled.*;
 
 @PageTitle("Home")
 @Route(value = "home", layout = MainLayout.class)
@@ -48,6 +53,8 @@ public class HomeView extends Div {
 
     private Grid<SongTable> grid;
 
+    private Clip currentClip;
+    private String currentPath;
     private Filters filters;
     private final SongTableService songTableService;
 
@@ -59,6 +66,8 @@ public class HomeView extends Div {
         this.authenticatedUser = authenticatedUser;
         this.songTableService = songTableService;
         this.likedSongsService = likedSongsService;
+        this.currentClip = null;
+        this.currentPath = "";
         setSizeFull();
         addClassNames("home-view");
 
@@ -186,10 +195,11 @@ public class HomeView extends Div {
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
 
         //play song
-        grid.addComponentColumn(person -> {
-            Button addToPlaylistButton = new Button(new Icon("lumo", "play"));
-            addToPlaylistButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            return addToPlaylistButton;
+        grid.addComponentColumn(song -> {
+            Button playButton = new Button(new Icon("lumo", "play"));
+            playButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            playButton.addClickListener(e -> handleButtonAction(playButton, song.getSongName()));
+            return playButton;
         }).setHeader("Play");
 
         grid.addComponentColumn(person -> {
@@ -214,6 +224,65 @@ public class HomeView extends Div {
         grid.getDataProvider().refreshAll();
     }
 
+    private void handleButtonAction(Button button, String songFilePath) {
+        String selectedPath = songFilePath; // name of the song
+        String songPath = "D:\\facultate\\anul 2\\Semestrul 2\\programare avansata(java)\\proiect java care merge(momentan)\\bag pula\\Spotify-Clone\\src\\main\\resources" + "\\" + songFilePath + ".wav";
+        Clip newClip = loadClip(songPath);
+        if (currentClip == null) {
+            if (newClip != null) {
+                play(newClip);
+                currentClip = newClip;
+                this.currentPath = selectedPath;
+            }
+        } else {
+            if (!selectedPath.equalsIgnoreCase(currentPath)) {
+                stop(currentClip);
+                play(newClip);
+                currentClip = newClip;
+                this.currentPath = selectedPath;
+            } else {
+                if (currentClip.isRunning()) {
+                    pause(currentClip);
+                } else {
+                    resume(currentClip);
+                }
+            }
+
+        }
+
+    }
+    private Clip loadClip(String songFilePath) {
+        try {
+            File songFile = new File(songFilePath);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(songFile);
+
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            return clip;
+        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void play(Clip clip) {
+        clip.start();
+    }
+
+    private void pause(Clip clip) {
+        if (clip.isRunning()) {
+            clip.stop();
+        }
+    }
+    private void resume(Clip clip) {
+        if (!clip.isRunning()) {
+            clip.start();
+        }
+    }
+    private void stop(Clip clip) {
+        clip.stop();
+        clip.setFramePosition(0);
+    }
     private void addToLikedSongs(SongTable song) {
         Optional<User> optionalUser = authenticatedUser.get();
         if (optionalUser.isPresent()) {
