@@ -1,6 +1,7 @@
 package com.example.application.data.service;
 
 import com.example.application.data.entity.Recommendations;
+import com.example.application.data.entity.User;
 import com.example.application.views.recommendations.RecommendationsView;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,4 +43,8 @@ public class RecommendationService {
     public List<Recommendations> findAll() {
         return repository.findAll();
     }
+    public List<Recommendations> findByUser(User user) {
+        return repository.findByUser(user);
+    }
+
 }

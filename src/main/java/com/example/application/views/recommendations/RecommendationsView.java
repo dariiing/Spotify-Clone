@@ -7,6 +7,7 @@ import com.example.application.data.entity.User;
 import com.example.application.data.service.LikedSongsService;
 import com.example.application.data.service.RecommendationService;
 import com.example.application.data.service.SongTableService;
+import com.example.application.data.service.UserService;
 import com.example.application.security.AuthenticatedUser;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
@@ -60,14 +61,16 @@ public class RecommendationsView extends Div {
     private final AuthenticatedUser authenticatedUser;
 
     private final RecommendationService recommendationService;
+    private final UserService userService;
 
 
     public RecommendationsView(AuthenticatedUser authenticatedUser, SongTableService songTableService,
-                               LikedSongsService likedSongsService, RecommendationService recommendationService) {
+                               LikedSongsService likedSongsService, RecommendationService recommendationService,UserService userService) {
         this.authenticatedUser = authenticatedUser;
         this.songTableService = songTableService;
         this.likedSongsService = likedSongsService;
         this.recommendationService = recommendationService;
+        this.userService = userService;
 
         setSizeFull();
         addClassNames("recommendations-view");
@@ -151,13 +154,13 @@ public class RecommendationsView extends Div {
         grid = new Grid<>(Recommendations.class, false);
         grid.setItems(recommendationService.findAll()); // Set the items from the recommendation table
 
+        User currentUser = userService.getCurrentUser();
+        List<Recommendations> recs = recommendationService.findByUser(currentUser);
         grid.addColumn("songName").setAutoWidth(true);
         grid.addColumn("artistName").setAutoWidth(true);
         grid.addColumn("albumName").setAutoWidth(true);
 
-        grid.setItems(query -> recommendationService.list(
-                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),
-                filters).stream());
+        grid.setItems(recs);
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
 

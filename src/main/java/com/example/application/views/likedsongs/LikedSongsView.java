@@ -86,8 +86,6 @@ public class LikedSongsView extends Div {
     public static class Filters extends Div implements Specification<LikedSongs> {
 
         private final TextField songName = new TextField("Song/Artist Name");
-//        private final TextField artistName = new TextField("Artist Name");
-
 
         public Filters(Runnable onSearch) {
 
@@ -96,7 +94,6 @@ public class LikedSongsView extends Div {
             addClassNames(LumoUtility.Padding.Horizontal.LARGE, LumoUtility.Padding.Vertical.MEDIUM,
                     LumoUtility.BoxSizing.BORDER);
             songName.setPlaceholder("Thriller/Michael Jackson");
-//            artistName.setPlaceholder("Michael Jackson");
 
 
             // Action buttons
@@ -104,7 +101,6 @@ public class LikedSongsView extends Div {
             resetBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
             resetBtn.addClickListener(e -> {
                 songName.clear();
-//                artistName.clear();
                 onSearch.run();
             });
             Button searchBtn = new Button("Search");
@@ -130,14 +126,6 @@ public class LikedSongsView extends Div {
                         lowerCaseFilter + "%");
                 predicates.add(criteriaBuilder.or(songNameMatch,artistNameMatch));
             }
-//            if (!artistName.isEmpty()) {
-//                String lowerCaseFilter = songName.getValue().toLowerCase();
-//
-//                Predicate artistNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("artistName")),
-//                        lowerCaseFilter + "%");
-//                predicates.add(criteriaBuilder.or(artistNameMatch));
-//
-//            }
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
         }
 
@@ -171,9 +159,6 @@ public class LikedSongsView extends Div {
         User currentUser = userService.getCurrentUser();
         List<LikedSongs> likedSongs = likedSongsService.findByUser(currentUser);
         grid.setItems(likedSongs);
-//        grid.setItems(query -> likedSongsService.findByUser(
-//                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),
-//                filters).stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
 
@@ -205,8 +190,12 @@ public class LikedSongsView extends Div {
     private void deleteLikedSong(LikedSongs likedSong) {
         likedSongsService.delete(likedSong.getId());
         Notification.show("Song removed from liked songs");
+        User currentUser = userService.getCurrentUser();
+        List<LikedSongs> likedSongs = likedSongsService.findByUser(currentUser);
+        grid.setItems(likedSongs);
         refreshGrid();
     }
+
 
     private void refreshGrid() {
         grid.getDataProvider().refreshAll();

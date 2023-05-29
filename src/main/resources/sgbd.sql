@@ -12,7 +12,7 @@ BEGIN
 
 BEGIN
 COPY temp_song_table ( id, song_name, artist_name, album_name, genre)
-    FROM 'D:\facultate\anul 2\Semestrul 2\programare avansata(java)\Proiect\Spotify-Clone\src\main\resources\songs.csv'
+    FROM 'C:\Users\daria\OneDrive\Desktop\spoticlone\src\main\resources\songs.csv'
     DELIMITER ',' CSV HEADER;
 EXCEPTION
     WHEN OTHERS THEN
@@ -77,10 +77,72 @@ CREATE TRIGGER check_duplicate_song_trigger
     FOR EACH ROW
     EXECUTE FUNCTION check_duplicate_song();
 
-
 -- recomandari
-c
+CREATE OR REPLACE FUNCTION add_recommendations()
+RETURNS TRIGGER AS $$
+DECLARE
+genre_var VARCHAR;
+    song_row RECORD;
+    most_frequent_genre VARCHAR;
+    second_most_frequent_genre VARCHAR;
+    max_genre_count INTEGER := 0;
+    second_max_genre_count INTEGER := 0;
+    song_limit INTEGER := 10;
+    song_counter INTEGER := 0;
+BEGIN
 
+FOR song_row IN (SELECT genre, COUNT(*) AS genre_count FROM liked_songs GROUP BY genre) LOOP
+        IF song_row.genre_count > max_genre_count THEN
+            second_most_frequent_genre := most_frequent_genre;
+            second_max_genre_count := max_genre_count;
+            most_frequent_genre := song_row.genre;
+            max_genre_count := song_row.genre_count;
+        ELSIF song_row.genre_count > second_max_genre_count THEN
+            second_most_frequent_genre := song_row.genre;
+            second_max_genre_count := song_row.genre_count;
+END IF;
+END LOOP;
+
+
+DELETE FROM recommendations;
+
+FOR song_row IN (
+        SELECT *
+        FROM song_table
+        WHERE genre = most_frequent_genre
+        AND song_name NOT IN (SELECT song_name FROM liked_songs)
+        ORDER BY random()
+    ) LOOP
+        EXIT WHEN song_counter >= song_limit;
+
+        NEW.id := nextval('idgenerator');
+INSERT INTO Recommendations (id, user_id, song_name, artist_name, album_name, genre)
+VALUES (NEW.id, NEW.user_id, song_row.song_name, song_row.artist_name, song_row.album_name, most_frequent_genre);
+
+song_counter := song_counter + 1;
+END LOOP;
+
+    IF song_counter < song_limit THEN
+        FOR song_row IN (
+            SELECT *
+            FROM song_table
+            WHERE genre = second_most_frequent_genre
+            AND song_name NOT IN (SELECT song_name FROM liked_songs)
+            ORDER BY random()
+        ) LOOP
+            EXIT WHEN song_counter >= song_limit;
+
+            NEW.id := nextval('idgenerator');
+INSERT INTO Recommendations (id, user_id, song_name, artist_name, album_name, genre)
+VALUES (NEW.id, NEW.user_id, song_row.song_name, song_row.artist_name, song_row.album_name, second_most_frequent_genre);
+
+song_counter := song_counter + 1;
+END LOOP;
+END IF;
+
+RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trigger_delete_liked_song
     AFTER DELETE ON liked_songs
