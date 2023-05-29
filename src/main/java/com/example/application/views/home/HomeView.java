@@ -118,7 +118,6 @@ public class HomeView extends Div {
     public static class Filters extends Div implements Specification<SongTable> {
 
         private final TextField songName = new TextField("Song/Artist Name");
-//        private final TextField artistName = new TextField("Artist Name");
 
         public Filters(Runnable onSearch) {
 
@@ -127,7 +126,6 @@ public class HomeView extends Div {
             addClassNames(LumoUtility.Padding.Horizontal.LARGE, LumoUtility.Padding.Vertical.MEDIUM,
                     LumoUtility.BoxSizing.BORDER);
             songName.setPlaceholder("Song/Artist Name");
-//            artistName.setPlaceholder("Michael Jackson");
 
             // Action buttons
             Button resetBtn = new Button("Reset");
@@ -161,35 +159,26 @@ public class HomeView extends Div {
                         lowerCaseFilter + "%");
                 predicates.add(criteriaBuilder.or(songNameMatch,artistNameMatch));
             }
-//            if (!artistName.isEmpty()) {
-//                String lowerCaseFilter = songName.getValue().toLowerCase();
-//
-//                Predicate artistNameMatch = criteriaBuilder.like(criteriaBuilder.lower(root.get("artistName")),
-//                        lowerCaseFilter + "%");
-//                predicates.add(criteriaBuilder.or(artistNameMatch));
-//
-//            }
-
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
         }
 
-        private String ignoreCharacters(String characters, String in) {
-            String result = in;
-            for (int i = 0; i < characters.length(); i++) {
-                result = result.replace("" + characters.charAt(i), "");
-            }
-            return result;
-        }
-
-        private Expression<String> ignoreCharacters(String characters, CriteriaBuilder criteriaBuilder,
-                Expression<String> inExpression) {
-            Expression<String> expression = inExpression;
-            for (int i = 0; i < characters.length(); i++) {
-                expression = criteriaBuilder.function("replace", String.class, expression,
-                        criteriaBuilder.literal(characters.charAt(i)), criteriaBuilder.literal(""));
-            }
-            return expression;
-        }
+//        private String ignoreCharacters(String characters, String in) {
+//            String result = in;
+//            for (int i = 0; i < characters.length(); i++) {
+//                result = result.replace("" + characters.charAt(i), "");
+//            }
+//            return result;
+//        }
+//
+//        private Expression<String> ignoreCharacters(String characters, CriteriaBuilder criteriaBuilder,
+//                Expression<String> inExpression) {
+//            Expression<String> expression = inExpression;
+//            for (int i = 0; i < characters.length(); i++) {
+//                expression = criteriaBuilder.function("replace", String.class, expression,
+//                        criteriaBuilder.literal(characters.charAt(i)), criteriaBuilder.literal(""));
+//            }
+//            return expression;
+//        }
 
     }
 
@@ -217,7 +206,9 @@ public class HomeView extends Div {
         grid.addComponentColumn(person -> {
             Button addToLikedSongsButton = new Button(new Icon(VaadinIcon.HEART));
             addToLikedSongsButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            addToLikedSongsButton.addClickListener(e -> addToLikedSongs(person));
+            addToLikedSongsButton.addClickListener(e ->
+                    addToLikedSongs(person)
+            );
             return addToLikedSongsButton;
         }).setHeader("Add to Liked Songs");
 
@@ -251,20 +242,22 @@ public class HomeView extends Div {
         addButton.addClickListener(e -> {
         Set<Playlist> selectedPlaylists = playlistListBox.getSelectedItems();
         for (Playlist playlist : selectedPlaylists) {
-                playlistService.addSongToPlaylist(playlist,song);
+            try {
+                playlistService.addSongToPlaylist(playlist, song);
+                Notification.show("Song added to playlists");
+            } catch (Exception exception) {
+                Notification.show("Already added in this playlist: " + playlist.getPlaylistName(), 3000, Notification.Position.MIDDLE);
+            }
         }
             dialog.close();
-            Notification.show("Song added to playlists");
         });
 
         Button cancelButton = new Button("Cancel");
         cancelButton.addClickListener(e -> dialog.close());
 
-        // Create a layout for the buttons and center it horizontally
         HorizontalLayout buttonLayout = new HorizontalLayout(addButton, cancelButton);
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
 
-        // Create a layout for the dialog content and center it both horizontally and vertically
         VerticalLayout contentLayout = new VerticalLayout(titleLabel,playlistListBox, buttonLayout);
         contentLayout.setSizeFull();
         contentLayout.setAlignItems(FlexComponent.Alignment.CENTER);
@@ -355,13 +348,11 @@ public class HomeView extends Div {
             likedSong.setGenre(song.getGenre());
             likedSong.setUser(currentUser);
 
-            // Save the liked song using the LikedSongsService
             likedSongsService.update(likedSong);
 
-            // Optional: Show a notification or perform any other desired action
             Notification.show("Song added to Liked Songs");
+
         } else {
-            // Handle the case when the current user is not available
             Notification.show("User not logged in");
         }
     }

@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +60,13 @@ public class PlaylistService {
         playlistToUpdate.setSongs(songs);
 
         repository.save(playlistToUpdate);
+    }
+
+    @Transactional
+    public List<SongTable> findSongsByPlaylistName(String playlistName) {
+        Playlist playlist = repository.findByPlaylistName(playlistName);
+        Hibernate.initialize(playlist.getSongs());
+        return playlist.getSongs();
     }
 
 

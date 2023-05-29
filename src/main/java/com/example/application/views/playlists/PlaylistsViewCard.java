@@ -1,9 +1,13 @@
 package com.example.application.views.playlists;
 
+import com.example.application.data.entity.SongTable;
+import com.example.application.data.service.PlaylistService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentUtil;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -12,9 +16,13 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
+import java.util.List;
+
 public class PlaylistsViewCard extends ListItem {
 
-    public PlaylistsViewCard(String text, String url) {
+    private final PlaylistService playlistService;
+    public PlaylistsViewCard(String text, String url,PlaylistService playlistService) {
+        this.playlistService = playlistService;
         addClassNames(LumoUtility.Background.CONTRAST_5, LumoUtility.Display.FLEX, LumoUtility.FlexDirection.COLUMN,
                 LumoUtility.AlignItems.START, LumoUtility.Padding.MEDIUM, LumoUtility.BorderRadius.LARGE);
 
@@ -47,10 +55,17 @@ public class PlaylistsViewCard extends ListItem {
     }
 
     private void showSongsDialog(String playlistName) {
-        // Create a dialog to display the songs
+        Grid<SongTable> grid = new Grid<>(SongTable.class, false);
+        grid.addColumn(SongTable::getSongName).setHeader("Song Name").setAutoWidth(true);
+        grid.addColumn(SongTable::getArtistName).setHeader("Artist Name").setAutoWidth(true);
+        grid.addColumn(SongTable::getAlbumName).setHeader("Album Name").setAutoWidth(true);
+
+        List<SongTable> songs = playlistService.findSongsByPlaylistName(playlistName);
+        grid.setItems(songs); // Set the entire songs list to the grid
+
         Dialog dialog = new Dialog();
-        dialog.setWidth("800px");
-        dialog.setHeight("600px");
+        dialog.setWidth("1100px");
+        dialog.setHeight("900px");
         dialog.setCloseOnEsc(false);
         dialog.setCloseOnOutsideClick(true);
 
@@ -63,18 +78,29 @@ public class PlaylistsViewCard extends ListItem {
         H2 playlistHeading = new H2(playlistName);
         layout.add(playlistHeading);
 
-        // Create a scrollable layout for the songs
-        Div songsContainer = new Div();
-        songsContainer.getStyle().set("max-height", "300px");
-        songsContainer.getStyle().set("overflow-y", "auto");
+        grid.addComponentColumn(song -> {
+            Button playButton = new Button(new Icon("lumo", "play"));
+            playButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            // playButton.addClickListener(e -> handleButtonAction(playButton, song.getSongName()));
+            return playButton;
+        }).setHeader("Play");
 
-        OrderedList songList = new OrderedList();
-        songList.add(new ListItem("Song 1"));
-        songList.add(new ListItem("Song 2"));
-        // Add more songs to the list
+        grid.addComponentColumn(song -> {
+            Button addToLikedSongsButton = new Button(new Icon(VaadinIcon.HEART));
+            addToLikedSongsButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            // addToLikedSongsButton.addClickListener(e -> addToLikedSongs(song));
+            return addToLikedSongsButton;
+        }).setHeader("Add to Liked Songs");
 
-        songsContainer.add(songList);
-        layout.add(songsContainer);
+        //delete from playlist button
+        grid.addComponentColumn(song -> {
+            Button addToLikedSongsButton = new Button(new Icon("lumo", "minus"));
+            addToLikedSongsButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            // addToLikedSongsButton.addClickListener(e -> addToLikedSongs(song));
+            return addToLikedSongsButton;
+        }).setHeader("Remove");
+
+        layout.add(grid);
 
         Button closeButton = new Button("Close");
         closeButton.addClickListener(event -> dialog.close());

@@ -199,3 +199,21 @@ CREATE TRIGGER prevent_duplicate_liked_song
     FOR EACH ROW
     EXECUTE FUNCTION check_duplicate_liked_song();
 
+CREATE OR REPLACE FUNCTION validate_playlist_songs()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM playlist_songs
+        WHERE playlist_id = NEW.playlist_id AND song_id = NEW.song_id
+    ) THEN
+        RAISE EXCEPTION 'Song already exists in the playlist';
+END IF;
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_playlist_songs
+    BEFORE INSERT OR UPDATE ON playlist_songs
+                         FOR EACH ROW
+                         EXECUTE FUNCTION validate_playlist_songs();

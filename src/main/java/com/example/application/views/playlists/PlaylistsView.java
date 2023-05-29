@@ -64,7 +64,8 @@ public class PlaylistsView extends Main {
         for (Playlist playlist : playlists) {
             imageContainer.add(new PlaylistsViewCard(
                     playlist.getPlaylistName(),
-                    "https://images.unsplash.com/photo-1494232410401-ad00d5433cfa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80"
+                    "https://images.unsplash.com/photo-1494232410401-ad00d5433cfa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
+                    playlistService
             ));
         }
 
@@ -100,7 +101,7 @@ public class PlaylistsView extends Main {
 
         TextField nameField = new TextField();
         nameField.setLabel("Playlist Name");
-        nameField.setRequiredIndicatorVisible(true); // Set the field as mandatory
+        nameField.setRequiredIndicatorVisible(true);
 
         HorizontalLayout buttonContainer = new HorizontalLayout();
         buttonContainer.setSpacing(true);
@@ -120,7 +121,7 @@ public class PlaylistsView extends Main {
                 newPlaylist.setUser(currentUser);
                 playlistService.save(newPlaylist);
 
-                PlaylistsViewCard newPlaylistCard = new PlaylistsViewCard(playlistName, imageUrl);
+                PlaylistsViewCard newPlaylistCard = new PlaylistsViewCard(playlistName, imageUrl,playlistService);
                 imageContainer.add(newPlaylistCard);
                 dialog.close();
             }
