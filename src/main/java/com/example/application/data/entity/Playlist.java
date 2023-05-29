@@ -13,6 +13,12 @@ public class Playlist extends AbstractEntity {
     @ManyToOne
     private User user;
 
+    @ManyToMany
+    @JoinTable(name = "playlist_songs",
+            joinColumns = @JoinColumn(name = "playlist_id"),
+            inverseJoinColumns = @JoinColumn(name = "song_id"))
+    private List<SongTable> songs = new ArrayList<>();
+
     public User getUser() {
         return user;
     }
@@ -20,12 +26,6 @@ public class Playlist extends AbstractEntity {
     public void setUser(User user) {
         this.user = user;
     }
-
-    @ManyToMany
-    @JoinTable(name = "playlist_songs",
-            joinColumns = @JoinColumn(name = "playlist_id"),
-            inverseJoinColumns = @JoinColumn(name = "song_id"))
-    private List<LikedSongs> songs = new ArrayList<>();
 
     public String getPlaylistName() {
         return playlistName;
@@ -35,11 +35,11 @@ public class Playlist extends AbstractEntity {
         this.playlistName = playlistName;
     }
 
-    public List<LikedSongs> getSongs() {
+    public List<SongTable> getSongs() {
         return songs;
     }
 
-    public void setSongs(List<LikedSongs> songs) {
+    public void setSongs(List<SongTable> songs) {
         this.songs = songs;
     }
 }

@@ -1,12 +1,10 @@
 package com.example.application.views.home;
 
-import com.example.application.data.entity.LikedSongs;
-import com.example.application.data.entity.Playlist;
-import com.example.application.data.entity.SongTable;
-import com.example.application.data.entity.User;
+import com.example.application.data.entity.*;
 import com.example.application.data.service.LikedSongsService;
 import com.example.application.data.service.PlaylistService;
 import com.example.application.data.service.SongTableService;
+import com.example.application.data.service.UserService;
 import com.example.application.security.AuthenticatedUser;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
@@ -70,14 +68,18 @@ public class HomeView extends Div {
     private final AuthenticatedUser authenticatedUser;
 
     private final PlaylistService playlistService;
+    private final UserService userService;
 
-    public HomeView(AuthenticatedUser authenticatedUser,SongTableService songTableService, LikedSongsService likedSongsService,PlaylistService playlistService) {
+
+    public HomeView(AuthenticatedUser authenticatedUser,SongTableService songTableService, LikedSongsService likedSongsService,PlaylistService playlistService,UserService userService) {
         this.authenticatedUser = authenticatedUser;
         this.songTableService = songTableService;
         this.likedSongsService = likedSongsService;
         this.currentClip = null;
         this.currentPath = "";
         this.playlistService = playlistService;
+        this.userService = userService;
+
         setSizeFull();
         addClassNames("home-view");
 
@@ -237,18 +239,20 @@ public class HomeView extends Div {
         dialog.setCloseOnOutsideClick(true);
 
         Label titleLabel = new Label("Add to Playlist");
-//    MultiSelectListBox<Playlist> playlistListBox = new MultiSelectListBox<>();
-////    playlistService.getAllPlaylists()
-//    List<Playlist> availablePlaylists = null;
-//    playlistListBox.setItems(availablePlaylists);
+        MultiSelectListBox<Playlist> playlistListBox = new MultiSelectListBox<>();
+
+        User currentUser = userService.getCurrentUser();
+        System.out.println( playlistService.findByUser(currentUser));
+        List<Playlist> availablePlaylists = playlistService.findByUser(currentUser);
+        playlistListBox.setItems(availablePlaylists);
+        playlistListBox.setItemLabelGenerator(Playlist::getPlaylistName);
 
         Button addButton = new Button("Add");
         addButton.addClickListener(e -> {
-//        Set<Playlist> selectedPlaylists = playlistListBox.getSelectedItems();
-            // Add the song to the selected playlists
-//        for (Playlist playlist : selectedPlaylists) {
-//            playlist.getSongs().add(song);
-//        }
+        Set<Playlist> selectedPlaylists = playlistListBox.getSelectedItems();
+        for (Playlist playlist : selectedPlaylists) {
+                playlistService.addSongToPlaylist(playlist,song);
+        }
             dialog.close();
             Notification.show("Song added to playlists");
         });
@@ -261,7 +265,7 @@ public class HomeView extends Div {
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
 
         // Create a layout for the dialog content and center it both horizontally and vertically
-        VerticalLayout contentLayout = new VerticalLayout(titleLabel, buttonLayout);
+        VerticalLayout contentLayout = new VerticalLayout(titleLabel,playlistListBox, buttonLayout);
         contentLayout.setSizeFull();
         contentLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 

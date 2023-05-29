@@ -4,6 +4,8 @@ import com.example.application.data.entity.LikedSongs;
 import com.example.application.data.entity.Playlist;
 import com.example.application.data.entity.SongTable;
 import com.example.application.data.entity.User;
+import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -45,5 +47,19 @@ public class PlaylistService {
     public int count() {
         return (int) repository.count();
     }
+
+    @Transactional
+    public void addSongToPlaylist(Playlist playlist, SongTable song) {
+        Playlist playlistToUpdate = repository.findById(playlist.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Playlist not found"));
+
+        Hibernate.initialize(playlistToUpdate.getSongs());
+        List<SongTable> songs = playlistToUpdate.getSongs();
+        songs.add(song);
+        playlistToUpdate.setSongs(songs);
+
+        repository.save(playlistToUpdate);
+    }
+
 
 }
