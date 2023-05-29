@@ -14,6 +14,7 @@ import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -28,10 +29,15 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.sound.sampled.*;
 
 @PageTitle("Liked Songs")
 @Route(value = "liked-songs", layout = MainLayout.class)
@@ -41,6 +47,8 @@ public class LikedSongsView extends Div {
 
     private Grid<LikedSongs> grid;
 
+    private Clip currentClip;
+    private String currentPath;
     private Filters filters;
     private final LikedSongsService likedSongsService;
     private final UserService userService;
@@ -50,7 +58,8 @@ public class LikedSongsView extends Div {
         this.userService = userService;
         setSizeFull();
         addClassNames("liked-songs-view");
-
+        this.currentClip = null;
+        this.currentPath = "";
         filters = new Filters(() -> refreshGrid());
         VerticalLayout layout = new VerticalLayout(createMobileFilters(), filters, createGrid());
         layout.setSizeFull();
@@ -93,7 +102,7 @@ public class LikedSongsView extends Div {
             addClassName("filter-layout");
             addClassNames(LumoUtility.Padding.Horizontal.LARGE, LumoUtility.Padding.Vertical.MEDIUM,
                     LumoUtility.BoxSizing.BORDER);
-            songName.setPlaceholder("Thriller/Michael Jackson");
+            songName.setPlaceholder("Song/Artist name");
 
 
             // Action buttons
@@ -163,10 +172,11 @@ public class LikedSongsView extends Div {
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
 
         //play song
-        grid.addComponentColumn(person -> {
-            Button addToPlaylistButton = new Button(new Icon("lumo", "play"));
-            addToPlaylistButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            return addToPlaylistButton;
+        grid.addComponentColumn(song -> {
+            Button playButton = new Button(new Icon("lumo", "play"));
+            playButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            playButton.addClickListener(e -> handleButtonAction(playButton, song.getSongName()));
+            return playButton;
         }).setHeader("Play");
 
         //remove song
@@ -178,6 +188,73 @@ public class LikedSongsView extends Div {
         }).setHeader("Remove");
 
         return grid;
+    }
+
+    private void handleButtonAction(Button button, String songFilePath) {
+        String selectedPath = songFilePath; // name of the song
+        String songPath = "D:\\facultate\\anul 2\\Semestrul 2\\programare avansata(java)\\Proiect\\Spotify-Clone\\src\\main\\resources" + "\\" + songFilePath + ".wav";
+        Clip newClip = loadClip(songPath);
+        if (newClip == null) {
+            Notification.show("Song not downloaded");
+            return;
+        }
+        if (currentClip == null) {
+            if (newClip != null) {
+                play(newClip);
+                currentClip = newClip;
+                this.currentPath = selectedPath;
+                button.setIcon(VaadinIcon.PAUSE.create());
+            }
+        } else {
+            if (!selectedPath.equalsIgnoreCase(currentPath)) {
+                stop(currentClip);
+                play(newClip);
+                currentClip = newClip;
+                this.currentPath = selectedPath;
+                button.setIcon(VaadinIcon.PAUSE.create());
+            } else {
+                if (currentClip.isRunning()) {
+                    pause(currentClip);
+                    button.setIcon(new Icon("lumo", "play"));
+                } else {
+                    resume(currentClip);
+                    button.setIcon(VaadinIcon.PAUSE.create());
+                }
+            }
+        }
+    }
+
+    private Clip loadClip(String songFilePath) {
+        try {
+            File songFile = new File(songFilePath);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(songFile);
+
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            return clip;
+        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void play(Clip clip) {
+        clip.start();
+    }
+
+    private void pause(Clip clip) {
+        if (clip.isRunning()) {
+            clip.stop();
+        }
+    }
+    private void resume(Clip clip) {
+        if (!clip.isRunning()) {
+            clip.start();
+        }
+    }
+    private void stop(Clip clip) {
+        clip.stop();
+        clip.setFramePosition(0);
     }
 
     private void deleteLikedSong(LikedSongs likedSong) {

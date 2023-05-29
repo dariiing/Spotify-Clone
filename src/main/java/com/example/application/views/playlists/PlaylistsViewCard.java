@@ -22,6 +22,9 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 
+import javax.sound.sampled.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,14 +32,17 @@ public class PlaylistsViewCard extends ListItem {
 
     private final PlaylistService playlistService;
     private final UserService userService;
+    private Clip currentClip;
+    private String currentPath;
     private final LikedSongsService likedSongsService;
     public PlaylistsViewCard(String text, String url,PlaylistService playlistService,UserService userService,LikedSongsService likedSongsService) {
         this.playlistService = playlistService;
         this.userService = userService;
         this.likedSongsService = likedSongsService;
+        this.currentClip = null;
+        this.currentPath = "";
         addClassNames(LumoUtility.Background.CONTRAST_5, LumoUtility.Display.FLEX, LumoUtility.FlexDirection.COLUMN,
                 LumoUtility.AlignItems.START, LumoUtility.Padding.MEDIUM, LumoUtility.BorderRadius.LARGE);
-
         Div div = new Div();
         div.addClassNames(LumoUtility.Background.CONTRAST, LumoUtility.Display.FLEX, LumoUtility.AlignItems.CENTER,
                 LumoUtility.JustifyContent.CENTER, LumoUtility.Margin.Bottom.MEDIUM, LumoUtility.Overflow.HIDDEN,
@@ -89,7 +95,7 @@ public class PlaylistsViewCard extends ListItem {
         grid.addComponentColumn(song -> {
             Button playButton = new Button(new Icon("lumo", "play"));
             playButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            // playButton.addClickListener(e -> handleButtonAction(playButton, song.getSongName()));
+             playButton.addClickListener(e -> handleButtonAction(playButton, song.getSongName()));
             return playButton;
         }).setHeader("Play");
 
@@ -118,6 +124,74 @@ public class PlaylistsViewCard extends ListItem {
 
         dialog.add(layout);
         dialog.open();
+    }
+
+    //play/pause/resume song
+    private void handleButtonAction(Button button, String songFilePath) {
+        String selectedPath = songFilePath; // name of the song
+        String songPath = "D:\\facultate\\anul 2\\Semestrul 2\\programare avansata(java)\\Proiect\\Spotify-Clone\\src\\main\\resources" + "\\" + songFilePath + ".wav";
+        Clip newClip = loadClip(songPath);
+        if (newClip == null) {
+            Notification.show("Song not downloaded");
+            return;
+        }
+        if (currentClip == null) {
+            if (newClip != null) {
+                play(newClip);
+                currentClip = newClip;
+                this.currentPath = selectedPath;
+                button.setIcon(VaadinIcon.PAUSE.create());
+            }
+        } else {
+            if (!selectedPath.equalsIgnoreCase(currentPath)) {
+                stop(currentClip);
+                play(newClip);
+                currentClip = newClip;
+                this.currentPath = selectedPath;
+                button.setIcon(VaadinIcon.PAUSE.create());
+            } else {
+                if (currentClip.isRunning()) {
+                    pause(currentClip);
+                    button.setIcon(new Icon("lumo", "play"));
+                } else {
+                    resume(currentClip);
+                    button.setIcon(VaadinIcon.PAUSE.create());
+                }
+            }
+        }
+    }
+
+    private Clip loadClip(String songFilePath) {
+        try {
+            File songFile = new File(songFilePath);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(songFile);
+
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            return clip;
+        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void play(Clip clip) {
+        clip.start();
+    }
+
+    private void pause(Clip clip) {
+        if (clip.isRunning()) {
+            clip.stop();
+        }
+    }
+    private void resume(Clip clip) {
+        if (!clip.isRunning()) {
+            clip.start();
+        }
+    }
+    private void stop(Clip clip) {
+        clip.stop();
+        clip.setFramePosition(0);
     }
     private void addToLikedSongs(SongTable song) {
         User currentUser = userService.getCurrentUser();

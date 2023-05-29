@@ -12,7 +12,7 @@ BEGIN
 
 BEGIN
 COPY temp_song_table ( id, song_name, artist_name, album_name, genre)
-    FROM 'C:\Users\daria\OneDrive\Desktop\spoticlone\src\main\resources\songs.csv'
+    FROM 'D:\facultate\anul 2\Semestrul 2\programare avansata(java)\Proiect\Spotify-Clone\src\main\resources\songs.csv'
     DELIMITER ',' CSV HEADER;
 EXCEPTION
     WHEN OTHERS THEN

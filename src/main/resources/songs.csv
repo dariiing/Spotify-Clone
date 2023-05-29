@@ -1,11 +1,253 @@
 ﻿id,song_name,artist_name,album_name,genre
-1,Bohemian Rhapsody,Queen,A Night at the Opera, Rock
-2,Hey Jude,The Beatles,The Beatles (White Album), Rock
-3,Hotel California,Eagles,Hotel California, Rock
-4,Rolling in the Deep,Adele,21, Pop
-5,Sweet Child o' Mine,Guns N' Roses,Appetite for Destruction, Rock
-6,Imagine,John Lennon,Imagine, Pop
-7,Stairway to Heaven,Led Zeppelin,Led Zeppelin IV, Rock
-8,Thriller,Michael Jackson,Thriller, Funk
-9,Smells Like Teen Spirit,Nirvana,Nevermind, Grunge
-10,Like a Rolling Stone,Bob Dylan,Highway 61 Revisited, Rock
+1,Shape of You,Ed Sheeran,(Divide),Pop
+2,Bohemian Rhapsody,Queen,A Night at the Opera,Rock
+3,Rolling in the Deep,Adele,21,Pop
+4,Hotel California,Eagles,Hotel California,Rock
+5,Hey Jude,The Beatles,The Beatles (White Album),Rock
+6,Uptown Funk,Mark Ronson ft. Bruno Mars,Uptown Special,Pop
+7,Hotline Bling,Drake,Views,Hip Hop
+8,Thinking Out Loud,Ed Sheeran,x (Multiply),Pop
+9,Sweet Child o' Mine,Guns N' Roses,Appetite for Destruction,Rock
+10,Smooth,Santana ft. Rob Thomas,Supernatural,Rock
+11,Billie Jean,Michael Jackson,Thriller,Pop
+12,November Rain,Guns N' Roses,Use Your Illusion I,Rock
+13,Bohemian Rhapsody,Queen,Greatest Hits,Rock
+14,Shape of My Heart,Sting,Ten Summoner's Tales,Pop
+15,Hotel California,Eagles,Hell Freezes Over,Rock
+16,Stairway to Heaven,Led Zeppelin,Led Zeppelin IV,Rock
+17,Thriller,Michael Jackson,Thriller,Pop
+18,Sweet Home Alabama,Lynyrd Skynyrd,Second Helping,Rock
+19,Hello,Adele,25,Pop
+20,Crazy in Love,Beyoncé ft. Jay-Z,Dangerously in Love,Pop
+21,Despacito,Luis Fonsi ft. Daddy Yankee,Vida,Latin Pop
+22,Hey Ya!,OutKast,Speakerboxxx/The Love Below,Hip Hop
+23,Rolling in the Deep,Adele,21,Pop
+24,Billie Jean,Michael Jackson,Thriller,Pop
+25,Rolling in the Deep,Adele,21,Pop
+26,Hello,Adele,25,Pop
+27,Someone Like You,Adele,21,Pop
+28,Set Fire to the Rain,Adele,21,Pop
+29,When We Were Young,Adele,25,Pop
+30,Skyfall,Adele,Skyfall Soundtrack,Pop
+31,Rumour Has It,Adele,21,Pop
+32,Send My Love (To Your New Lover),Adele,25,Pop
+33,Chasing Pavements,Adele,19,Pop
+34,Water Under the Bridge,Adele,25,Pop
+35,Turning Tables,Adele,21,Pop
+36,Hometown Glory,Adele,19,Pop
+37,All I Ask,Adele,25,Pop
+38,I Can't Make You Love Me,Adele,iTunes Festival: London 2011,Pop
+39,Million Years Ago,Adele,25,Pop
+40,Daydreamer,Adele,19,Pop
+41,Remedy,Adele,25,Pop
+42,Love in the Dark,Adele,25,Pop
+43,Cold Shoulder,Adele,19,Pop
+44,Melt My Heart to Stone,Adele,19,Pop
+45,Hey Ya!,OutKast,Speakerboxxx/The Love Below,Hip Hop
+46,Ms. Jackson,OutKast,Stankonia,Hip Hop
+47,Roses,OutKast,Speakerboxxx/The Love Below,Hip Hop
+48,So Fresh, So Clean,OutKast,Hip Hop
+49,B.O.B.,OutKast,Stankonia,Hip Hop
+50,The Way You Move,OutKast,Speakerboxxx/The Love Below,Hip Hop
+51,Elevators (Me & You),OutKast,ATLiens,Hip Hop
+52,Rosa Parks,OutKast,Aquemini,Hip Hop
+53,SpottieOttieDopaliscious,OutKast,Aquemini,Hip Hop
+54,Aquemini,OutKast,Aquemini,Hip Hop
+55,ATLiens,OutKast,ATLiens,Hip Hop
+56,GhettoMusick,OutKast,Speakerboxxx/The Love Below,Hip Hop
+57,Player's Ball,OutKast,Southernplayalisticadillacmuzik,Hip Hop
+58,Humble Mumble,OutKast,Stankonia,Hip Hop
+59,Prototype,OutKast,Speakerboxxx/The Love Below,Hip Hop
+60,Morris Brown,OutKast ft. Scar & Sleepy Brown,Idlewild,Hip Hop
+61,Git Up,OutKast,Southernplayalisticadillacmuzik,Hip Hop
+62,Da Art of Storytellin' (Pt. 1),OutKast,Aquemini,Hip Hop
+63,Rosa Parks (Intro),OutKast,Aquemini,Hip Hop
+64,Southernplayalisticadillacmuzik,OutKast,Southernplayalisticadillacmuzik,Hip Hop
+65,Lose Yourself,Eminem,8 Mile Soundtrack,Hip Hop
+66,Love the Way You Lie,Eminem ft. Rihanna,Recovery,Hip Hop
+67,Stan,Eminem ft. Dido,The Marshall Mathers LP,Hip Hop
+68,Lose Yourself,Eminem,8 Mile Soundtrack,Hip Hop
+69,Love the Way You Lie,Eminem ft. Rihanna,Recovery,Hip Hop
+70,Stan,Eminem ft. Dido,The Marshall Mathers LP,Hip Hop
+71,Not Afraid,Eminem,Recovery,Hip Hop
+72,Without Me,Eminem,The Eminem Show,Hip Hop
+73,Rap God,Eminem,The Marshall Mathers LP 2,Hip Hop
+74,Mockingbird,Eminem,Encore,Hip Hop
+75,The Real Slim Shady,Eminem,The Marshall Mathers LP,Hip Hop
+76,Beautiful,Eminem,Relapse,Hip Hop
+77,Crazy Train,Ozzy Osbourne,Blizzard of Ozz,Heavy Metal
+78,Mr. Crowley,Ozzy Osbourne,Blizzard of Ozz,Heavy Metal
+79,Bark at the Moon,Ozzy Osbourne,Bark at the Moon,Heavy Metal
+80,No More Tears,Ozzy Osbourne,No More Tears,Heavy Metal
+81,Mama  I'm Coming Home,,Ozzy Osbourne,Heavy Metal
+82,Dreamer,Ozzy Osbourne,Down to Earth,Heavy Metal
+83,Shot in the Dark,Ozzy Osbourne,The Ultimate Sin,Heavy Metal
+84,Diary of a Madman,Ozzy Osbourne,Diary of a Madman,Heavy Metal
+85,I Don't Know,Ozzy Osbourne,Blizzard of Ozz,Heavy Metal
+86,Suicide Solution,Ozzy Osbourne,Blizzard of Ozz,Heavy Metal
+87,Flying High Again,Ozzy Osbourne,Diary of a Madman,Heavy Metal
+88,Road to Nowhere,Ozzy Osbourne,No More Tears,Heavy Metal
+89,Crazy Babies,Ozzy Osbourne,No Rest for the Wicked,Heavy Metal
+90,I Just Want You,Ozzy Osbourne,Ozzmosis,Heavy Metal
+91,Gets Me Through,Ozzy Osbourne,Down to Earth,Heavy Metal
+92,Over the Mountain,Ozzy Osbourne,Diary of a Madman,Heavy Metal
+93,Hellraiser,Ozzy Osbourne,No More Tears,Heavy Metal
+94,Perry Mason,Ozzy Osbourne,Ozzmosis,Heavy Metal
+95,I Will Always Love You,Dolly Parton,Jolene,Country
+96,Friends in Low Places,Garth Brooks,No Fences,Country
+97,"Take Me Home, Country Roads",John Denver,"Poems, Prayers & Promises",Country
+98,The Gambler,Kenny Rogers,The Gambler,Country
+99,Before He Cheats,Carrie Underwood,Some Hearts,Country
+100,Ring of Fire,Johnny Cash,Ring of Fire: The Best of Johnny Cash,Country
+101,Wagon Wheel,Old Crow Medicine Show,O.C.M.S.,Country
+102,Mammas Don't Let Your Babies Grow Up to Be Cowboys,Waylon Jennings & Willie Nelson,Waylon &  Willie,Country
+103,Jolene,Dolly Parton,Jolene,Country
+104,Crazy,Patsy Cline,Patsy Cline Showcase,Country
+105,The Dance,Garth Brooks,Garth Brooks,Country
+106,Folsom Prison Blues,Johnny Cash,With His Hot and Blue Guitar,Country
+107,Need You Now,Lady A,Need You Now,Country
+108,Tennessee Whiskey,Chris Stapleton,Traveller,Country
+109,Achy Breaky Heart,Billy Ray Cyrus,Some Gave All,Country
+110,Live Like You Were Dying,Tim McGraw,Live Like You Were Dying,Country
+111,Stand by Your Man,Tammy Wynette,Stand by Your Man,Country
+112,Colder Weather,Zac Brown Band,You Get What You Give,Country
+113,God's Country,Blake Shelton,God's Country,Country
+114,Girl Crush,Little Big Town,Pain Killer,Country
+115,Around the World,Daft Punk,Homework,Techno
+116,One More Time,Daft Punk,Discovery,Techno
+117,Sandstorm,Darude,Before the Storm,Techno
+118,Insomnia,Faithless,Reverence,Techno
+119,Born Slippy .NUXX,Underworld,Trainspotting Soundtrack,Techno
+120,Pump Up the Jam,Technotronic,Pump Up the Jam,Techno
+121,I Feel Love,Donna Summer,I Remember Yesterday,Techno
+122,Strings of Life,Derrick May,N/A,Techno
+123,Blue Monday,New Order,"Power, Corruption & Lies",Techno
+124,Windowlicker,Aphex Twin,Windowlicker,Techno
+125,The Man with the Red Face,Laurent Garnier,Unreasonable Behaviour,Techno
+126,Gouryella,Gouryella,Gouryella,Techno
+127,Age of Love,The Age of Love,The Age of Love,Techno
+128,Strobe,Deadmau5,For Lack of a Better Name,Techno
+129,Phuture 2000,Carl Cox,Phuture 2000,Techno
+130,Energy Flash,Joey Beltram,Energy Flash,Techno
+131,Café del Mar,Energy 52,Café del Mar,Techno
+132,Acid Tracks,Phuture,Acid Tracks,Techno
+133,Phantom,Justice,Cross,Techno
+134,Spastik,Plastikman,Spastik,Techno
+135,One More Time,Daft Punk,Discovery,House
+136,Show Me Love,Robin S,Show Me Love,House
+137,I Wanna Dance with Somebody,Whitney Houston,Whitney,House
+138,Finally,CeCe Peniston,Finally,House
+139,Around the World,Daft Punk,Homework,House
+140,Pjanoo,Eric Prydz,Pjanoo,House
+141,Don't You Worry Child,Swedish House Mafia ft. John Martin,Until Now,House
+142,Music Sounds Better with You,Stardust,Music Sounds Better with You,House
+143,Your Love,The Outfield,Play Deep,House
+144,Don't Stop Movin',Livin' Joy,Don't Stop Movin',House
+145,You Don't Know Me,Armand Van Helden ft. Duane Harden,2 Future 4 U,House
+146,My My My,Armand Van Helden,Nympho,House
+147,This Is What You Came For,Calvin Harris ft. Rihanna,Single,House
+148,Finally Found,Honeyz,Wonder No. 8,House
+149,We Found Love,Rihanna ft. Calvin Harris,Talk That Talk,House
+150,Promises,Calvin Harris ft. Sam Smith,Single,House
+151,Lady (Hear Me Tonight),Modjo,Modjo,House
+152,Call on Me,Eric Prydz,Call on Me,House
+153,Jackie Chan,Tiësto & Dzeko ft. Preme & Post Malone,Single,House
+154,More Than Friends,James Hype ft. Kelli-Leigh,Single,House
+155,In Da Club,50 Cent,Get Rich or Die Tryin',Rap
+156,Lose Yourself,Eminem,8 Mile Soundtrack,Rap
+157,Juicy,The Notorious B.I.G.,Ready to Die,Rap
+158,Gin and Juice,Snoop Dogg,Doggystyle,Rap
+159,Empire State of Mind,Jay-Z ft. Alicia Keys,The Blueprint 3,Rap
+160,HUMBLE.,Kendrick Lamar,DAMN.,Rap
+161,N.Y. State of Mind,Nas,Illmatic,Rap
+162,Straight Outta Compton,N.W.A,Straight Outta Compton,Rap
+163,Hotline Bling,Drake,Views,Rap
+164,Mo Money Mo Problems,The Notorious B.I.G. ft. Puff Daddy & Mase,Life After Death,Rap
+165,Dear Mama,2Pac,Me Against the World,Rap
+166,Gold Digger,Kanye West ft. Jamie Foxx,Late Registration,Rap
+167,Lollipop,Lil Wayne ft. Static Major,Tha Carter III,Rap
+168,The Message,Grandmaster Flash & The Furious Five,The Message,Rap
+169,C.R.E.A.M.,Wu-Tang Clan,Enter the Wu-Tang (36 Chambers),Rap
+170,In My Feelings,Drake,Scorpion,Rap
+171,Hard Knock Life (Ghetto Anthem),Jay-Z,Vol. 2... Hard Knock Life,Rap
+172,Big Poppa,The Notorious B.I.G.,Ready to Die,Rap
+173,Regulate,Warren G ft. Nate Dogg,Regulate... G Funk Era,Rap
+174,Still D.R.E.,Dr. Dre ft. Snoop Dogg,2001,Rap
+175,Stormy Monday,T-Bone Walker,Single,Blues
+176,The Thrill Is Gone,B.B. King,Singin' the Blues,Blues
+177,Sweet Home Chicago,Robert Johnson,Single,Blues
+178,Crossroads,Cream,Wheels of Fire,Blues
+179,I Can't Quit You Baby,Willie Dixon,Single,Blues
+180,Mannish Boy,Muddy Waters,Hard Again,Blues
+181,Born Under a Bad Sign,Albert King,Born Under a Bad Sign,Blues
+182,Hoochie Coochie Man,Muddy Waters,At Newport 1960,Blues
+183,The Sky Is Crying,Elmore James,The Sky Is Crying,Blues
+184,Red House,Jimi Hendrix,Are You Experienced,Blues
+185,Thrill Is Gone,Tracy Chapman,Give Me One Reason,Blues
+186,Fever,Little Willie John,Fever,Blues
+187,Wang Dang Doodle,Koko Taylor,Wang Dang Doodle,Blues
+188,Dust My Broom,Elmore James,Single,Blues
+189,Take Five,The Dave Brubeck Quartet,Time Out,Jazz
+190,All Blues,Miles Davis,Kind of Blue,Jazz
+191,So What,Miles Davis,Kind of Blue,Jazz
+192,Fly Me to the Moon,Frank Sinatra,It Might as Well Be Swing,Jazz
+193,My Favorite Things,John Coltrane,My Favorite Things,Jazz
+194,Autumn Leaves,Stan Getz & João Gilberto,Getz/Gilberto,Jazz
+195,Summertime,Ella Fitzgerald & Louis Armstrong,Porgy and Bess,Jazz
+196,Blue in Green,Bill Evans,Portrait in Jazz,Jazz
+197,Round Midnight,Thelonious Monk,Monk's Dream,Jazz
+198,On Green Dolphin Street,Miles Davis,Kind of Blue,Jazz
+199,Blowin' in the Wind,Bob Dylan,The Freewheelin' Bob Dylan,Folk
+200,Mr. Tambourine Man,Bob Dylan,Bringing It All Back Home,Folk
+201,The Times They Are a-Changin',Bob Dylan,The Times They Are a-Changin',Folk
+202,Leaving on a Jet Plane,John Denver, Prayers & Promises,Folk
+203,If I Had a Hammer,Peter,Peter,Folk
+204,Big Yellow Taxi,Joni Mitchell,Ladies of the Canyon,Folk
+205,Where Have All the Flowers Gone?,Pete Seeger,The Bitter and the Sweet,Folk
+206,The House of the Rising Sun,The Animals,The Animals,Folk
+207,Scarborough Fair/Canticle,Simon & Garfunkel, Rosemary and Thyme,Folk
+208,This Land Is Your Land,Woody Guthrie,This Land Is Your Land,Folk
+209,Adorn,Miguel,Kaleidoscope Dream,R&B
+210,Superstition,Stevie Wonder,Talking Book,R&B
+211,I Heard It Through the Grapevine,Marvin Gaye,In the Groove,R&B
+212,My Girl,The Temptations,The Temptations Sing Smokey,R&B
+213,Respect,Aretha Franklin,I Never Loved a Man the Way I Love You,R&B
+214,Let's Stay Together,Al Green,Let's Stay Together,R&B
+215,Ain't No Sunshine,Bill Withers,Just As I Am,R&B
+216,Stand by Me,Ben E. King,Don't Play That Song!,R&B
+217,Rock with You,Michael Jackson,Off the Wall,R&B
+218,I Will Always Love You,Whitney Houston,The Bodyguard Soundtrack,R&B
+219,No Woman, No Cry,Bob Marley & The Wailers,Reggae
+220,Three Little Birds,Bob Marley & The Wailers,Exodus,Reggae
+221,One Love / People Get Ready,Bob Marley & The Wailers,Exodus,Reggae
+222,Stir It Up,Bob Marley & The Wailers,Catch a Fire,Reggae
+223,Redemption Song,Bob Marley & The Wailers,Uprising,Reggae
+224,I Shot the Sheriff,Bob Marley & The Wailers,Burnin',Reggae
+225,Is This Love,Bob Marley & The Wailers,Kaya,Reggae
+226,Get Up Stand Up,Bob Marley & The Wailers,Burnin',Reggae
+227,Israelites,Desmond Dekker,The Israelites,Reggae
+228,Blitzkrieg Bop,Ramones,Ramones,Punk
+229,Anarchy in the U.K.,Sex Pistols,Never Mind the Bollocks,Punk
+230,I Wanna Be Sedated,Ramones,Road to Ruin,Punk
+231,London Calling,The Clash,London Calling,Punk
+232,God Save the Queen,Sex Pistols,Never Mind the Bollocks,Punk
+233,Sheena Is a Punk Rocker,Ramones,Rocket to Russia,Punk
+234,White Riot,The Clash,The Clash,Punk
+235,Holiday in Cambodia,Dead Kennedys,Fresh Fruit for Rotting Vegetables,Punk
+236,Teenage Kicks,The Undertones,The Undertones,Punk
+237,Punk Rock Girl,The Dead Milkmen,Beelzebubba,Punk
+238,Despacito,Luis Fonsi ft. Daddy Yankee,Vida,Latin
+239,Bailando,Enrique Iglesias ft. Descemer Bueno & Gente de Zona,Sex and Love,Latin
+240,Hips Don't Lie,Shakira ft. Wyclef Jean,Oral Fixation Vol. 2,Latin
+241,Vivir Mi Vida,Marc Anthony,3,Latin
+242,Danza Kuduro,Don Omar ft. Lucenzo,Meet the Orphans,Latin
+243,La Tortura,Shakira ft. Alejandro Sanz,Fijación Oral Vol. 1,Latin
+244,Gasolina,Daddy Yankee,Barrio Fino,Latin
+245,La Camisa Negra,Juanes,Mi Sangre,Latin
+246,Cielito Lindo,Various Artists,N/A,Latin
+247,Oye Como Va,Santana,Abraxas,Latin
+248,Fluorescent Adolescent,Arctic Monkeys,Favourite Worst Nightmare,Indie Rock
+249,Smells Like Teen Spirit,Nirvana,Nevermind,Grunge
+250,Float On,Modest Mouse,Good News for People Who Love Bad News,Indie Rock
+251,Take Me Out,Franz Ferdinand,Franz Ferdinand,Indie Rock
+252,Stubborn Love,The Lumineers,The Lumineers,Indie Rock
