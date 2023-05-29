@@ -169,13 +169,6 @@ public class LikedSongsView extends Div {
             return addToPlaylistButton;
         }).setHeader("Play");
 
-        //add to playlist
-        grid.addComponentColumn(person -> {
-            Button addToPlaylistButton = new Button(new Icon("lumo", "plus"));
-            addToPlaylistButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            return addToPlaylistButton;
-        }).setHeader("Add to Playlist");
-
         //remove song
         grid.addComponentColumn(likedSong -> {
             Button deleteButton = new Button(new Icon("lumo", "minus"));

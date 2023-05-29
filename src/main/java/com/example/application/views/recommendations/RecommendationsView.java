@@ -55,19 +55,15 @@ public class RecommendationsView extends Div {
     private Grid<Recommendations> grid;
 
     private Filters filters;
-    private final SongTableService songTableService;
+//    private final SongTableService songTableService;
     private final LikedSongsService likedSongsService;
-
-    private final AuthenticatedUser authenticatedUser;
 
     private final RecommendationService recommendationService;
     private final UserService userService;
 
 
-    public RecommendationsView(AuthenticatedUser authenticatedUser, SongTableService songTableService,
-                               LikedSongsService likedSongsService, RecommendationService recommendationService,UserService userService) {
-        this.authenticatedUser = authenticatedUser;
-        this.songTableService = songTableService;
+    public RecommendationsView(LikedSongsService likedSongsService, RecommendationService recommendationService,UserService userService) {
+//        this.songTableService = songTableService;
         this.likedSongsService = likedSongsService;
         this.recommendationService = recommendationService;
         this.userService = userService;
@@ -129,30 +125,11 @@ public class RecommendationsView extends Div {
 
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
         }
-//
-//        private String ignoreCharacters(String characters, String in) {
-//            String result = in;
-//            for (int i = 0; i < characters.length(); i++) {
-//                result = result.replace("" + characters.charAt(i), "");
-//            }
-//            return result;
-//        }
-
-//        private Expression<String> ignoreCharacters(String characters, CriteriaBuilder criteriaBuilder,
-//                Expression<String> inExpression) {
-//            Expression<String> expression = inExpression;
-//            for (int i = 0; i < characters.length(); i++) {
-//                expression = criteriaBuilder.function("replace", String.class, expression,
-//                        criteriaBuilder.literal(characters.charAt(i)), criteriaBuilder.literal(""));
-//            }
-//            return expression;
-//        }
-
     }
 
     private Component createGrid() {
         grid = new Grid<>(Recommendations.class, false);
-        grid.setItems(recommendationService.findAll()); // Set the items from the recommendation table
+        grid.setItems(recommendationService.findAll());
 
         User currentUser = userService.getCurrentUser();
         List<Recommendations> recs = recommendationService.findByUser(currentUser);
@@ -178,13 +155,6 @@ public class RecommendationsView extends Div {
             return addToPlaylistButton;
         }).setHeader("Add to Liked Songs");
 
-        //add to playlist
-        grid.addComponentColumn(person -> {
-            Button addToPlaylistButton = new Button(new Icon("lumo", "plus"));
-            addToPlaylistButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            return addToPlaylistButton;
-        }).setHeader("Add to Playlist");
-
         return grid;
     }
 
@@ -193,22 +163,13 @@ public class RecommendationsView extends Div {
     }
 
     private void addToLikedSongs(Recommendations song) {
-        Optional<User> optionalUser = authenticatedUser.get();
-        if (optionalUser.isPresent()) {
-            User currentUser = optionalUser.get();
-            LikedSongs likedSong = new LikedSongs();
-            likedSong.setSongName(song.getSongName());
-            likedSong.setArtistName(song.getArtistName());
-            likedSong.setAlbumName(song.getAlbumName());
-            likedSong.setUser(currentUser);
-
-            likedSongsService.update(likedSong);
-
-            // Optional: Show a notification or perform any other desired action
-            Notification.show("Song added to Liked Songs");
-        } else {
-            // Handle the case when the current user is not available
-            Notification.show("User not logged in");
+        User currentUser = userService.getCurrentUser();
+        LikedSongs likedSong = new LikedSongs();
+        likedSong.setSongName(song.getSongName());
+        likedSong.setArtistName(song.getArtistName());
+        likedSong.setAlbumName(song.getAlbumName());
+        likedSong.setUser(currentUser);
+        likedSongsService.update(likedSong);
+        Notification.show("Song added to Liked Songs");
         }
-    }
 }

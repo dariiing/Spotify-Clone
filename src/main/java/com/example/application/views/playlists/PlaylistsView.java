@@ -2,6 +2,7 @@ package com.example.application.views.playlists;
 
 import com.example.application.data.entity.Playlist;
 import com.example.application.data.entity.User;
+import com.example.application.data.service.LikedSongsService;
 import com.example.application.data.service.PlaylistService;
 import com.example.application.data.service.UserService;
 import com.example.application.views.MainLayout;
@@ -14,10 +15,7 @@ import com.vaadin.flow.component.html.OrderedList;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.component.upload.Upload;
-import com.vaadin.flow.component.upload.receivers.MemoryBuffer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.theme.lumo.LumoUtility.AlignItems;
@@ -29,7 +27,6 @@ import com.vaadin.flow.theme.lumo.LumoUtility.ListStyleType;
 import com.vaadin.flow.theme.lumo.LumoUtility.Margin;
 import com.vaadin.flow.theme.lumo.LumoUtility.MaxWidth;
 import com.vaadin.flow.theme.lumo.LumoUtility.Padding;
-import com.vaadin.flow.theme.lumo.LumoUtility.TextColor;
 import jakarta.annotation.security.PermitAll;
 
 import java.util.List;
@@ -43,9 +40,12 @@ public class PlaylistsView extends Main {
     private final PlaylistService playlistService;
     private final UserService userService;
 
-    public PlaylistsView(PlaylistService playlistService, UserService userService) {
+    private final LikedSongsService likedSongsService;
+
+    public PlaylistsView(PlaylistService playlistService, UserService userService,LikedSongsService likedSongsService) {
         this.playlistService = playlistService;
         this.userService = userService;
+        this.likedSongsService = likedSongsService;
         constructUI();
     }
     private void constructUI() {
@@ -65,7 +65,7 @@ public class PlaylistsView extends Main {
             imageContainer.add(new PlaylistsViewCard(
                     playlist.getPlaylistName(),
                     "https://images.unsplash.com/photo-1494232410401-ad00d5433cfa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80",
-                    playlistService
+                    playlistService,userService,likedSongsService
             ));
         }
 
@@ -121,12 +121,11 @@ public class PlaylistsView extends Main {
                 newPlaylist.setUser(currentUser);
                 playlistService.save(newPlaylist);
 
-                PlaylistsViewCard newPlaylistCard = new PlaylistsViewCard(playlistName, imageUrl,playlistService);
+                PlaylistsViewCard newPlaylistCard = new PlaylistsViewCard(playlistName, imageUrl, playlistService, userService,likedSongsService);
                 imageContainer.add(newPlaylistCard);
                 dialog.close();
             }
         });
-
         Button cancelButton = new Button("Cancel");
         cancelButton.addClickListener(e -> dialog.close());
 

@@ -15,6 +15,7 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
@@ -60,19 +61,16 @@ public class HomeView extends Div {
 
     private Clip currentClip;
     private String currentPath;
-    private Filters filters;
+    private final Filters filters;
     private final SongTableService songTableService;
 
     private final LikedSongsService likedSongsService;
-
-    private final AuthenticatedUser authenticatedUser;
 
     private final PlaylistService playlistService;
     private final UserService userService;
 
 
-    public HomeView(AuthenticatedUser authenticatedUser,SongTableService songTableService, LikedSongsService likedSongsService,PlaylistService playlistService,UserService userService) {
-        this.authenticatedUser = authenticatedUser;
+    public HomeView(SongTableService songTableService, LikedSongsService likedSongsService,PlaylistService playlistService,UserService userService) {
         this.songTableService = songTableService;
         this.likedSongsService = likedSongsService;
         this.currentClip = null;
@@ -132,7 +130,6 @@ public class HomeView extends Div {
             resetBtn.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
             resetBtn.addClickListener(e -> {
                 songName.clear();
-//                artistName.clear();
                 onSearch.run();
             });
             Button searchBtn = new Button("Search");
@@ -161,25 +158,6 @@ public class HomeView extends Div {
             }
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
         }
-
-//        private String ignoreCharacters(String characters, String in) {
-//            String result = in;
-//            for (int i = 0; i < characters.length(); i++) {
-//                result = result.replace("" + characters.charAt(i), "");
-//            }
-//            return result;
-//        }
-//
-//        private Expression<String> ignoreCharacters(String characters, CriteriaBuilder criteriaBuilder,
-//                Expression<String> inExpression) {
-//            Expression<String> expression = inExpression;
-//            for (int i = 0; i < characters.length(); i++) {
-//                expression = criteriaBuilder.function("replace", String.class, expression,
-//                        criteriaBuilder.literal(characters.charAt(i)), criteriaBuilder.literal(""));
-//            }
-//            return expression;
-//        }
-
     }
 
     private Component createGrid() {
@@ -229,42 +207,58 @@ public class HomeView extends Div {
         dialog.setCloseOnEsc(true);
         dialog.setCloseOnOutsideClick(true);
 
-        Label titleLabel = new Label("Add to Playlist");
+        H2 titleLabel = new H2("Add to Playlist");
         MultiSelectListBox<Playlist> playlistListBox = new MultiSelectListBox<>();
 
         User currentUser = userService.getCurrentUser();
-        System.out.println( playlistService.findByUser(currentUser));
+        System.out.println(playlistService.findByUser(currentUser));
         List<Playlist> availablePlaylists = playlistService.findByUser(currentUser);
         playlistListBox.setItems(availablePlaylists);
         playlistListBox.setItemLabelGenerator(Playlist::getPlaylistName);
 
         Button addButton = new Button("Add");
         addButton.addClickListener(e -> {
-        Set<Playlist> selectedPlaylists = playlistListBox.getSelectedItems();
-        for (Playlist playlist : selectedPlaylists) {
-            try {
-                playlistService.addSongToPlaylist(playlist, song);
-                Notification.show("Song added to playlists");
-            } catch (Exception exception) {
-                Notification.show("Already added in this playlist: " + playlist.getPlaylistName(), 3000, Notification.Position.MIDDLE);
+            Set<Playlist> selectedPlaylists = playlistListBox.getSelectedItems();
+            for (Playlist playlist : selectedPlaylists) {
+                try {
+                    playlistService.addSongToPlaylist(playlist, song);
+                    Notification.show("Song added to playlists");
+                } catch (Exception exception) {
+                    Notification.show("Already added in this playlist: " + playlist.getPlaylistName(), 2000, Notification.Position.MIDDLE);
+                }
             }
-        }
             dialog.close();
         });
 
         Button cancelButton = new Button("Cancel");
         cancelButton.addClickListener(e -> dialog.close());
 
-        HorizontalLayout buttonLayout = new HorizontalLayout(addButton, cancelButton);
+        Button deleteButton = new Button("Delete Playlist");
+        deleteButton.addClickListener(e -> {
+            Set<Playlist> selectedPlaylists = playlistListBox.getSelectedItems();
+            for (Playlist playlist : selectedPlaylists) {
+                try {
+                    playlistService.removePlaylist(playlist);
+                    availablePlaylists.remove(playlist);
+                    playlistListBox.setItems(availablePlaylists);
+                    Notification.show("Playlist deleted: " + playlist.getPlaylistName());
+                } catch (Exception exception) {
+                    Notification.show("Failed to delete playlist: " + playlist.getPlaylistName(), 2000, Notification.Position.MIDDLE);
+                }
+            }
+        });
+
+        HorizontalLayout buttonLayout = new HorizontalLayout(addButton, cancelButton, deleteButton);
         buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
 
-        VerticalLayout contentLayout = new VerticalLayout(titleLabel,playlistListBox, buttonLayout);
+        VerticalLayout contentLayout = new VerticalLayout(titleLabel, playlistListBox, buttonLayout);
         contentLayout.setSizeFull();
         contentLayout.setAlignItems(FlexComponent.Alignment.CENTER);
 
         dialog.add(contentLayout);
         dialog.open();
     }
+
 
 
     private void refreshGrid() {
@@ -338,24 +332,14 @@ public class HomeView extends Div {
         clip.setFramePosition(0);
     }
     private void addToLikedSongs(SongTable song) {
-        Optional<User> optionalUser = authenticatedUser.get();
-        if (optionalUser.isPresent()) {
-            User currentUser = optionalUser.get();
-            LikedSongs likedSong = new LikedSongs();
-            likedSong.setSongName(song.getSongName());
-            likedSong.setArtistName(song.getArtistName());
-            likedSong.setAlbumName(song.getAlbumName());
-            likedSong.setGenre(song.getGenre());
-            likedSong.setUser(currentUser);
-
-            likedSongsService.update(likedSong);
-
-            Notification.show("Song added to Liked Songs");
-
-        } else {
-            Notification.show("User not logged in");
+        User currentUser = userService.getCurrentUser();
+        LikedSongs likedSong = new LikedSongs();
+        likedSong.setSongName(song.getSongName());
+        likedSong.setArtistName(song.getArtistName());
+        likedSong.setAlbumName(song.getAlbumName());
+        likedSong.setGenre(song.getGenre());
+        likedSong.setUser(currentUser);
+        likedSongsService.update(likedSong);
+        Notification.show("Song added to Liked Songs");
         }
-    }
-
-
 }

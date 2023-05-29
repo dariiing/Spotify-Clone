@@ -1,9 +1,6 @@
 package com.example.application.data.service;
 
-import com.example.application.data.entity.LikedSongs;
-import com.example.application.data.entity.Playlist;
-import com.example.application.data.entity.SongTable;
-import com.example.application.data.entity.User;
+import com.example.application.data.entity.*;
 import jakarta.transaction.Transactional;
 import org.hibernate.Hibernate;
 import org.springframework.data.domain.Page;
@@ -67,6 +64,34 @@ public class PlaylistService {
         Playlist playlist = repository.findByPlaylistName(playlistName);
         Hibernate.initialize(playlist.getSongs());
         return playlist.getSongs();
+    }
+
+    @Transactional
+    public void removeSongFromPlaylist(Playlist playlist, SongTable song) {
+        Playlist playlistToUpdate = repository.findById(playlist.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Playlist not found"));
+
+        Hibernate.initialize(playlistToUpdate.getSongs());
+        List<SongTable> songs = playlistToUpdate.getSongs();
+        songs.remove(song);
+        playlistToUpdate.setSongs(songs);
+
+        repository.save(playlistToUpdate);
+    }
+    @Transactional
+    public void removePlaylist(Playlist playlist) {
+        Playlist playlistDel = repository.findById(playlist.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Playlist not found"));
+        playlistDel.getSongs().clear();
+        repository.delete(playlistDel);
+    }
+
+    public Playlist findPlaylistByName(String playlistName) {
+        return repository.findByPlaylistName(playlistName);
+    }
+
+    public Playlist update(Playlist playlist) {
+        return repository.save(playlist);
     }
 
 
