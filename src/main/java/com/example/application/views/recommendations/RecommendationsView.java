@@ -38,12 +38,17 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.sound.sampled.*;
 
 
 @PageTitle("Recommendations")
@@ -53,7 +58,8 @@ import org.springframework.data.jpa.domain.Specification;
 public class RecommendationsView extends Div {
 
     private Grid<Recommendations> grid;
-
+    private Clip currentClip;
+    private String currentPath;
     private Filters filters;
 //    private final SongTableService songTableService;
     private final LikedSongsService likedSongsService;
@@ -67,7 +73,8 @@ public class RecommendationsView extends Div {
         this.likedSongsService = likedSongsService;
         this.recommendationService = recommendationService;
         this.userService = userService;
-
+        this.currentClip = null;
+        this.currentPath = "";
         setSizeFull();
         addClassNames("recommendations-view");
 
@@ -142,10 +149,11 @@ public class RecommendationsView extends Div {
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
 
         //play song
-        grid.addComponentColumn(person -> {
-            Button addToPlaylistButton = new Button(new Icon("lumo", "play"));
-            addToPlaylistButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            return addToPlaylistButton;
+        grid.addComponentColumn(song -> {
+            Button playButton = new Button(new Icon("lumo", "play"));
+            playButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            playButton.addClickListener(e -> handleButtonAction(playButton, song.getSongName()));
+            return playButton;
         }).setHeader("Play");
 
         grid.addComponentColumn(person -> {
@@ -160,6 +168,73 @@ public class RecommendationsView extends Div {
 
     private void refreshGrid() {
         grid.getDataProvider().refreshAll();
+    }
+
+    private void handleButtonAction(Button button, String songFilePath) {
+        String selectedPath = songFilePath; // name of the song
+        String songPath = "D:\\facultate\\anul 2\\Semestrul 2\\programare avansata(java)\\Proiect\\Spotify-Clone\\src\\main\\resources" + "\\" + songFilePath + ".wav";
+        Clip newClip = loadClip(songPath);
+        if (newClip == null) {
+            Notification.show("Song not downloaded");
+            return;
+        }
+        if (currentClip == null) {
+            if (newClip != null) {
+                play(newClip);
+                currentClip = newClip;
+                this.currentPath = selectedPath;
+                button.setIcon(VaadinIcon.PAUSE.create());
+            }
+        } else {
+            if (!selectedPath.equalsIgnoreCase(currentPath)) {
+                stop(currentClip);
+                play(newClip);
+                currentClip = newClip;
+                this.currentPath = selectedPath;
+                button.setIcon(VaadinIcon.PAUSE.create());
+            } else {
+                if (currentClip.isRunning()) {
+                    pause(currentClip);
+                    button.setIcon(new Icon("lumo", "play"));
+                } else {
+                    resume(currentClip);
+                    button.setIcon(VaadinIcon.PAUSE.create());
+                }
+            }
+        }
+    }
+
+    private Clip loadClip(String songFilePath) {
+        try {
+            File songFile = new File(songFilePath);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(songFile);
+
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            return clip;
+        } catch (LineUnavailableException | IOException | UnsupportedAudioFileException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void play(Clip clip) {
+        clip.start();
+    }
+
+    private void pause(Clip clip) {
+        if (clip.isRunning()) {
+            clip.stop();
+        }
+    }
+    private void resume(Clip clip) {
+        if (!clip.isRunning()) {
+            clip.start();
+        }
+    }
+    private void stop(Clip clip) {
+        clip.stop();
+        clip.setFramePosition(0);
     }
 
     private void addToLikedSongs(Recommendations song) {
