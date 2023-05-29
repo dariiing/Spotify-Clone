@@ -1,7 +1,9 @@
 package com.example.application.views.likedsongs;
 
 import com.example.application.data.entity.LikedSongs;
+import com.example.application.data.entity.User;
 import com.example.application.data.service.LikedSongsService;
+import com.example.application.data.service.UserService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -41,9 +43,11 @@ public class LikedSongsView extends Div {
 
     private Filters filters;
     private final LikedSongsService likedSongsService;
+    private final UserService userService;
 
-    public LikedSongsView(LikedSongsService likedSongsService) {
+    public LikedSongsView(LikedSongsService likedSongsService,UserService userService) {
         this.likedSongsService = likedSongsService;
+        this.userService = userService;
         setSizeFull();
         addClassNames("liked-songs-view");
 
@@ -164,9 +168,12 @@ public class LikedSongsView extends Div {
         grid.addColumn("artistName").setAutoWidth(true);
         grid.addColumn("albumName").setAutoWidth(true);
 
-        grid.setItems(query -> likedSongsService.list(
-                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),
-                filters).stream());
+        User currentUser = userService.getCurrentUser();
+        List<LikedSongs> likedSongs = likedSongsService.findByUser(currentUser);
+        grid.setItems(likedSongs);
+//        grid.setItems(query -> likedSongsService.findByUser(
+//                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query)),
+//                filters).stream());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.addClassNames(LumoUtility.Border.TOP, LumoUtility.BorderColor.CONTRAST_10);
 

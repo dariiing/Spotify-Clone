@@ -23,6 +23,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -236,18 +237,18 @@ public class HomeView extends Div {
         dialog.setCloseOnOutsideClick(true);
 
         Label titleLabel = new Label("Add to Playlist");
-//        MultiSelectListBox<Playlist> playlistListBox = new MultiSelectListBox<>();
-////        playlistService.getAllPlaylists()
-//        List<Playlist> availablePlaylists = null;
-//        playlistListBox.setItems(availablePlaylists);
+//    MultiSelectListBox<Playlist> playlistListBox = new MultiSelectListBox<>();
+////    playlistService.getAllPlaylists()
+//    List<Playlist> availablePlaylists = null;
+//    playlistListBox.setItems(availablePlaylists);
 
         Button addButton = new Button("Add");
         addButton.addClickListener(e -> {
-//            Set<Playlist> selectedPlaylists = playlistListBox.getSelectedItems();
+//        Set<Playlist> selectedPlaylists = playlistListBox.getSelectedItems();
             // Add the song to the selected playlists
-//            for (Playlist playlist : selectedPlaylists) {
-//                playlist.getSongs().add(song);
-//            }
+//        for (Playlist playlist : selectedPlaylists) {
+//            playlist.getSongs().add(song);
+//        }
             dialog.close();
             Notification.show("Song added to playlists");
         });
@@ -255,9 +256,19 @@ public class HomeView extends Div {
         Button cancelButton = new Button("Cancel");
         cancelButton.addClickListener(e -> dialog.close());
 
-        dialog.add(titleLabel,new HorizontalLayout(addButton, cancelButton));
+        // Create a layout for the buttons and center it horizontally
+        HorizontalLayout buttonLayout = new HorizontalLayout(addButton, cancelButton);
+        buttonLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+
+        // Create a layout for the dialog content and center it both horizontally and vertically
+        VerticalLayout contentLayout = new VerticalLayout(titleLabel, buttonLayout);
+        contentLayout.setSizeFull();
+        contentLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+
+        dialog.add(contentLayout);
         dialog.open();
     }
+
 
     private void refreshGrid() {
         grid.getDataProvider().refreshAll();
