@@ -192,7 +192,7 @@ public class LikedSongsView extends Div {
 
     private void handleButtonAction(Button button, String songFilePath) {
         String selectedPath = songFilePath; // name of the song
-        String songPath = "D:\\facultate\\anul 2\\Semestrul 2\\programare avansata(java)\\Proiect\\Spotify-Clone\\src\\main\\resources" + "\\" + songFilePath + ".wav";
+        String songPath = "C:\\Users\\daria\\OneDrive\\Desktop\\spoticlone\\src\\main\\resources" + "\\" + songFilePath + ".wav";
         Clip newClip = loadClip(songPath);
         if (newClip == null) {
             Notification.show("Song not downloaded");

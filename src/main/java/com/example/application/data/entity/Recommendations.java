@@ -15,9 +15,6 @@ public class Recommendations extends AbstractEntity {
     private String artistName;
     private String albumName;
     private String genre;
-
-    // Other recommendation-related attributes or properties
-
     public User getUser() {
         return user;
     }
@@ -57,7 +54,5 @@ public class Recommendations extends AbstractEntity {
     public void setGenre(String genre) {
         this.genre = genre;
     }
-
-    // Other getters and setters for recommendation-related attributes
 
 }
